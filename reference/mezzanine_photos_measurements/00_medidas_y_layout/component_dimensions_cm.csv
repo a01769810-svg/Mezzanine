@@ -1,0 +1,12 @@
+component,x_cm,y_cm,z_cm,notes
+mesa,140,59.6,2.6,esquinas redondeadas; plastico negro 0.3cm
+soporte_mesa_base,7,57.6,3,cantidad 2
+soporte_mesa_columna,4,19.4,69,"posicion dentro base: x=1,y=31,z=3"
+cabina_plc,70,25,50,gabinete/control; confirmar orientacion
+cubo_individual,4,4,5,pieza manipulable
+base_cubos,14,14,2,borde/corte interior 0.5cm aprox
+pintarron,30.3,22.7,2,placa blanca de trabajo
+gripper_base,8,8,0.6,base del gripper
+gripper_total,,6,,ancho total; apertura util 4.4cm; dedo 0.8cm
+conveyor,,13.2,5.5,largo TBD
+perfil_camara,4,4,,perfil aluminio 4x4; altura camara 63.5cm

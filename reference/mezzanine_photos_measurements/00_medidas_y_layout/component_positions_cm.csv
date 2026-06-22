@@ -1,0 +1,11 @@
+component,x_cm,y_cm,z_cm,frame_type,notes
+cobot_base,24,42.5,0,absolute_table_origin,base del cobot
+base_cubos,34.8,2,0,absolute_table_origin,base azul donde estan los cubos
+conveyor,38.5,30,0,absolute_table_origin,origen conveyor; largo TBD
+fotoelectrico,21,12,5,local_conveyor_probable,"si es local, absoluto aprox = 59.5,42,5"
+hmi,65,42.5,0,absolute_table_origin,HMI Siemens
+start_emergency_panel,117,4,0,absolute_table_origin,boton start + emergency stop
+pintarron,9,3.5,0,absolute_table_origin,placa blanca
+cabina_plc,5,59.6,-7.3,absolute_table_origin,gabinete en borde/frente de mesa; confirmar orientacion
+computadora,,,0,tbd,a la derecha de la mesa; falta posicion exacta
+camara,,,63.5,derived,sobre fotoelectrico; y offset -16cm desde perfil/sensor
