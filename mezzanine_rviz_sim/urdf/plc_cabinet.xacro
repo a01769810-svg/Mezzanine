@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    PLC cabinet 0.700 x 0.250 x 0.500 m.
+    Documented position xyz = (0.050, 0.596, -0.073) m is the TOP-LEFT-FRONT
+    corner: the cabinet hangs BELOW the tabletop, extending in +x, +y, -z.
+  -->
+  <xacro:property name="plc_size_x" value="0.700"/>
+  <xacro:property name="plc_size_y" value="0.250"/>
+  <xacro:property name="plc_size_z" value="0.500"/>
+
+  <xacro:macro name="mz_plc_cabinet" params="parent:=table_origin x:=0.050 y:=0.596 z:=-0.073">
+    <link name="plc_cabinet">
+      <visual>
+        <origin xyz="${plc_size_x/2} ${plc_size_y/2} ${-plc_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${plc_size_x} ${plc_size_y} ${plc_size_z}"/>
+        </geometry>
+        <material name="mz_dark_gray"/>
+      </visual>
+      <collision>
+        <origin xyz="${plc_size_x/2} ${plc_size_y/2} ${-plc_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${plc_size_x} ${plc_size_y} ${plc_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${parent}_to_plc_cabinet" type="fixed">
+      <parent link="${parent}"/>
+      <child link="plc_cabinet"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

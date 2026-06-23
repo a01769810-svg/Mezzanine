@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<!--
+  Mezzanine cell - top-level Xacro for Phase 1 RViz visualization.
+  - units: meters
+  - origin: lower-left corner of tabletop, z=0 at tabletop surface
+  - All component xyz positions are LOWER-LEFT-FRONT corners of their boxes
+    (except the table itself and the PLC cabinet, which are TOP-LEFT-FRONT
+    corners because they extend below z=0; see docs/measurements.md).
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="mezzanine_cell">
+
+  <xacro:arg name="arm_model"  default="xarm6"/>
+  <xacro:arg name="mesh_suffix" default="stl"/>
+
+  <xacro:property name="arm_model" value="$(arg arm_model)"/>
+  <xacro:property name="dof" value="6"/>
+  <xacro:if value="${arm_model == 'xarm5'}">
+    <xacro:property name="dof" value="5"/>
+  </xacro:if>
+  <xacro:if value="${arm_model == 'xarm6'}">
+    <xacro:property name="dof" value="6"/>
+  </xacro:if>
+  <xacro:if value="${arm_model == 'xarm7'}">
+    <xacro:property name="dof" value="7"/>
+  </xacro:if>
+
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/table.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/table_supports.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/plc_cabinet.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/conveyor.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/photoelectric_sensor.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/camera_frame.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/hmi.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/buttons_panel.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/cubes_and_base.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/white_board.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/gripper_adapter.xacro"/>
+
+  <link name="world"/>
+
+  <link name="table_origin"/>
+  <joint name="world_to_table_origin" type="fixed">
+    <parent link="world"/>
+    <child link="table_origin"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:mz_table parent="table_origin"/>
+
+  <xacro:mz_table_support side="left"  parent="table_origin"
+                          base_x="0.030" base_y="0.010" base_z="-0.720"/>
+  <xacro:mz_table_support side="right" parent="table_origin"
+                          base_x="1.300" base_y="0.010" base_z="-0.720"/>
+
+  <xacro:mz_plc_cabinet parent="table_origin" x="0.050" y="0.596" z="-0.073"/>
+
+  <xacro:mz_white_board parent="table_origin" x="0.090" y="0.035" z="0.000"/>
+
+  <xacro:mz_cube_base parent="table_origin" x="0.348" y="0.020" z="0.000"/>
+
+  <xacro:mz_conveyor parent="table_origin" x="0.385" y="0.300" z="0.000"/>
+
+  <xacro:mz_photoelectric_sensor parent="conveyor_base"
+                                 x="0.210" y="0.120" z="0.050"/>
+
+  <xacro:mz_camera_support parent="table_origin"
+                           profile_x="0.575" profile_y="0.400"
+                           camera_z="0.635"/>
+
+  <xacro:mz_hmi parent="table_origin" x="0.650" y="0.425" z="0.000"/>
+
+  <xacro:mz_buttons_panel parent="table_origin"
+                          x="1.170" y="0.040" z="0.000"/>
+
+  <link name="cobot_base">
+    <visual>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.060" length="0.010"/>
+      </geometry>
+      <material name="mz_dark_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.060" length="0.010"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="table_origin_to_cobot_base" type="fixed">
+    <parent link="table_origin"/>
+    <child link="cobot_base"/>
+    <origin xyz="0.240 0.425 0.000" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:include filename="$(find xarm_description)/urdf/xarm_device_macro.xacro"/>
+  <xacro:xarm_device
+    prefix=""
+    hw_ns="xarm"
+    limited="false"
+    effort_control="false"
+    velocity_control="false"
+    add_gripper="false"
+    add_vacuum_gripper="false"
+    add_bio_gripper="false"
+    dof="${dof}"
+    robot_type="xarm"
+    ros2_control_plugin="uf_robot_hardware/UFRobotSystemHardware"
+    attach_to="cobot_base"
+    attach_xyz="0 0 0.010"
+    attach_rpy="0 0 0"
+    create_attach_link="false"
+    load_gazebo_plugin="false"
+    add_realsense_d435i="false"
+    add_d435i_links="false"
+    use_gazebo_camera="false"
+    add_other_geometry="false"
+    geometry_type="box"
+    geometry_mass="0.1"
+    geometry_height="0.1"
+    geometry_radius="0.1"
+    geometry_length="0.1"
+    geometry_width="0.1"
+    geometry_mesh_filename=""
+    geometry_mesh_origin_xyz="0 0 0"
+    geometry_mesh_origin_rpy="0 0 0"
+    geometry_mesh_tcp_xyz="0 0 0"
+    geometry_mesh_tcp_rpy="0 0 0"
+    robot_ip=""
+    report_type="normal"
+    baud_checkset="true"
+    default_gripper_baud="2000000"
+    model1300="false"
+    robot_sn=""
+    mesh_suffix="$(arg mesh_suffix)"
+    kinematics_suffix=""
+    gripper_version="G1"
+  />
+
+  <xacro:mz_gripper_adapter parent_link="link6"/>
+
+</robot>

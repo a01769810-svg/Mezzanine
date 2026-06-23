@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    HMI placeholder: 0.20 x 0.05 x 0.15 m (TBD).
+    Position xyz = (0.650, 0.425, 0) m is the lower-left-front corner.
+  -->
+  <xacro:property name="hmi_size_x" value="0.200"/>
+  <xacro:property name="hmi_size_y" value="0.050"/>
+  <xacro:property name="hmi_size_z" value="0.150"/>
+
+  <xacro:macro name="mz_hmi" params="parent:=table_origin x:=0.650 y:=0.425 z:=0.000">
+    <link name="hmi_panel">
+      <visual>
+        <origin xyz="${hmi_size_x/2} ${hmi_size_y/2} ${hmi_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${hmi_size_x} ${hmi_size_y} ${hmi_size_z}"/>
+        </geometry>
+        <material name="mz_hmi_dark"/>
+      </visual>
+      <collision>
+        <origin xyz="${hmi_size_x/2} ${hmi_size_y/2} ${hmi_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${hmi_size_x} ${hmi_size_y} ${hmi_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${parent}_to_hmi_panel" type="fixed">
+      <parent link="${parent}"/>
+      <child link="hmi_panel"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

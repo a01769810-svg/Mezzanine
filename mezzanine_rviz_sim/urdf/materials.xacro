@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <material name="mz_table_metal">
+    <color rgba="0.75 0.75 0.78 1.0"/>
+  </material>
+
+  <material name="mz_table_black">
+    <color rgba="0.05 0.05 0.05 1.0"/>
+  </material>
+
+  <material name="mz_aluminum">
+    <color rgba="0.85 0.85 0.88 1.0"/>
+  </material>
+
+  <material name="mz_dark_gray">
+    <color rgba="0.25 0.25 0.25 1.0"/>
+  </material>
+
+  <material name="mz_white">
+    <color rgba="0.95 0.95 0.95 1.0"/>
+  </material>
+
+  <material name="mz_blue">
+    <color rgba="0.10 0.35 0.85 1.0"/>
+  </material>
+
+  <material name="mz_red">
+    <color rgba="0.85 0.10 0.10 1.0"/>
+  </material>
+
+  <material name="mz_green">
+    <color rgba="0.10 0.75 0.20 1.0"/>
+  </material>
+
+  <material name="mz_yellow">
+    <color rgba="0.95 0.85 0.10 1.0"/>
+  </material>
+
+  <material name="mz_orange">
+    <color rgba="0.95 0.55 0.10 1.0"/>
+  </material>
+
+  <material name="mz_panel_white">
+    <color rgba="0.92 0.92 0.92 1.0"/>
+  </material>
+
+  <material name="mz_hmi_dark">
+    <color rgba="0.12 0.12 0.15 1.0"/>
+  </material>
+
+  <material name="mz_conveyor_belt">
+    <color rgba="0.10 0.10 0.10 1.0"/>
+  </material>
+
+  <material name="mz_sensor_yellow">
+    <color rgba="0.95 0.80 0.10 1.0"/>
+  </material>
+
+</robot>

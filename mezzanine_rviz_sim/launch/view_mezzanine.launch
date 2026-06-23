@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Mezzanine cell - Phase 1 RViz visualization -->
+  <arg name="arm_model" default="xarm6"
+       doc="Arm model: xarm5 | xarm6 (default) | xarm7"/>
+  <arg name="use_joint_state_publisher_gui" default="true"
+       doc="If true, run joint_state_publisher_gui (sliders) to move xArm joints"/>
+  <arg name="rviz_config" default="$(find mezzanine_rviz_sim)/rviz/mezzanine.rviz"/>
+
+  <param name="robot_description"
+         command="$(find xacro)/xacro
+                  $(find mezzanine_rviz_sim)/urdf/mezzanine_cell.urdf.xacro
+                  arm_model:=$(arg arm_model)"/>
+
+  <node if="$(arg use_joint_state_publisher_gui)"
+        name="joint_state_publisher_gui"
+        pkg="joint_state_publisher_gui"
+        type="joint_state_publisher_gui"/>
+  <node unless="$(arg use_joint_state_publisher_gui)"
+        name="joint_state_publisher"
+        pkg="joint_state_publisher"
+        type="joint_state_publisher"/>
+
+  <node name="robot_state_publisher"
+        pkg="robot_state_publisher"
+        type="robot_state_publisher"/>
+
+  <node name="rviz"
+        pkg="rviz"
+        type="rviz"
+        args="-d $(arg rviz_config)"
+        required="true"/>
+</launch>

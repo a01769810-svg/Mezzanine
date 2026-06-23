@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    White board / working plate.
+    Size 0.303 x 0.227 x 0.020 m. Position xyz = (0.090, 0.035, 0) m is
+    the lower-left-front corner on the tabletop.
+  -->
+  <xacro:property name="wb_size_x" value="0.303"/>
+  <xacro:property name="wb_size_y" value="0.227"/>
+  <xacro:property name="wb_size_z" value="0.020"/>
+
+  <xacro:macro name="mz_white_board" params="parent:=table_origin x:=0.090 y:=0.035 z:=0.000">
+    <link name="white_board">
+      <visual>
+        <origin xyz="${wb_size_x/2} ${wb_size_y/2} ${wb_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${wb_size_x} ${wb_size_y} ${wb_size_z}"/>
+        </geometry>
+        <material name="mz_white"/>
+      </visual>
+      <collision>
+        <origin xyz="${wb_size_x/2} ${wb_size_y/2} ${wb_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${wb_size_x} ${wb_size_y} ${wb_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${parent}_to_white_board" type="fixed">
+      <parent link="${parent}"/>
+      <child link="white_board"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

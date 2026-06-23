@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    Table supports (x2). Each support consists of:
+      - A base plate (0.070 x 0.576 x 0.030 m) lying flat below the column.
+      - A column (0.040 x 0.194 x 0.690 m) standing on the base.
+    The base_xyz parameter is the LOWER-LEFT-FRONT corner of the base plate
+    in the table_origin frame (z<0 because the support is below the tabletop).
+  -->
+  <xacro:property name="support_base_size_x" value="0.070"/>
+  <xacro:property name="support_base_size_y" value="0.576"/>
+  <xacro:property name="support_base_size_z" value="0.030"/>
+
+  <xacro:property name="support_col_size_x" value="0.040"/>
+  <xacro:property name="support_col_size_y" value="0.194"/>
+  <xacro:property name="support_col_size_z" value="0.690"/>
+
+  <xacro:property name="col_local_x" value="0.010"/>
+  <xacro:property name="col_local_y" value="0.310"/>
+  <xacro:property name="col_local_z" value="0.030"/>
+
+  <xacro:macro name="mz_table_support" params="side parent:=table_origin base_x base_y base_z">
+    <link name="table_support_${side}">
+      <visual>
+        <origin xyz="${support_base_size_x/2} ${support_base_size_y/2} ${support_base_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${support_base_size_x} ${support_base_size_y} ${support_base_size_z}"/>
+        </geometry>
+        <material name="mz_dark_gray"/>
+      </visual>
+      <collision>
+        <origin xyz="${support_base_size_x/2} ${support_base_size_y/2} ${support_base_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${support_base_size_x} ${support_base_size_y} ${support_base_size_z}"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="${col_local_x + support_col_size_x/2} ${col_local_y + support_col_size_y/2} ${col_local_z + support_col_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${support_col_size_x} ${support_col_size_y} ${support_col_size_z}"/>
+        </geometry>
+        <material name="mz_dark_gray"/>
+      </visual>
+      <collision>
+        <origin xyz="${col_local_x + support_col_size_x/2} ${col_local_y + support_col_size_y/2} ${col_local_z + support_col_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${support_col_size_x} ${support_col_size_y} ${support_col_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${parent}_to_table_support_${side}" type="fixed">
+      <parent link="${parent}"/>
+      <child link="table_support_${side}"/>
+      <origin xyz="${base_x} ${base_y} ${base_z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>
