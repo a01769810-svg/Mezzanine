@@ -73,6 +73,12 @@
   <xacro:mz_buttons_panel parent="table_origin"
                           x="1.170" y="0.040" z="0.000"/>
 
+  <!--
+    cobot_base: EXCEPTION to the lower-left-corner convention.
+    The documented xyz (0.240, 0.425, 0) is the CENTER of the circular base.
+    The puck cylinder is centered on the link frame's z-axis, so its xy axis
+    coincides with the documented center. xArm 6 mounts centered on this point.
+  -->
   <link name="cobot_base">
     <visual>
       <origin xyz="0 0 0.005" rpy="0 0 0"/>

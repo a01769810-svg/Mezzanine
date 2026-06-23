@@ -62,10 +62,13 @@ dimensions:
     button_height_m: 0.012
 
 # All positions are LOWER-LEFT-FRONT CORNER of the component box,
-# expressed in the table_origin frame.
+# expressed in the table_origin frame, EXCEPT cobot_base (see below).
 positions:
+  # EXCEPTION: cobot_base xyz_m is the CENTER of the circular cobot base,
+  # NOT a corner. The xArm 6 mounts centered on this point.
   cobot_base:
-    xyz_m: [0.240, 0.425, 0.000]
+    xyz_m_center: [0.240, 0.425, 0.000]
+    anchor: center_of_circular_base
   cube_base:
     xyz_m: [0.348, 0.020, 0.000]
   conveyor:

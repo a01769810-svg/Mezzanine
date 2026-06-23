@@ -24,6 +24,20 @@ anchor point (corner), each Xacro macro:
 
 This keeps measurement values readable and matches the documented origin.
 
+### Exception: cobot_base anchor is the CENTER of the circular base
+
+The cobot is the only component whose documented `xyz_m` represents the
+CENTER of its (circular metallic) base, NOT a corner. The xArm 6 mounts
+centered on this point.
+
+In the URDF this is already handled correctly: the `cobot_base` link frame
+is placed at the documented `(0.240, 0.425, 0.000)` m, the puck cylinder
+is centered on the link's z-axis, and the xArm attaches at `attach_xyz="0 0 0.010"`.
+So the xArm rises centered over the documented xy position.
+
+Confirmed by the user (Phase 1 sign-off). Other components remain
+lower-left-front corner anchored.
+
 ## Measurement table (in meters)
 
 | Component | Size (X x Y x Z) m | Position (x,y,z) m | Status |
