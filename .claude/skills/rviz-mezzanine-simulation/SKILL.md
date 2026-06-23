@@ -349,3 +349,56 @@ Do not:
 * Use unclear frame names.
 * Mix visual-only components with control logic without documenting it.
 * Implement before giving the user a diagnosis and plan.
+
+## Phase 1.x conventions (current source of truth as of 2026-06-23)
+
+### Source of truth for XY positions
+
+`reference/dxf/EstacionMezzanine.dxf` is the canonical layout (mm,
+`$INSUNITS=4`). DXF entities are color-mapped to components — see
+`mezzanine_rviz_sim/docs/measurements.md` for the table. Conversion:
+`m = (mm - dxf_table_origin_mm) * 0.001` with table-origin offset
+`(3.32483, -0.27342) mm`. The DXF only provides planar XY; Z values come
+from physical measurements or component specs (table top z=0 plane in
+the `table_origin` frame).
+
+### Frame hierarchy (Phase 1.2)
+
+`world` is the **real floor** (RViz grid renders at z=0). `table_origin`
+is a child of `world` elevated at `xyz = (0, 0, 0.746)` (= support base
+0.030 + column 0.690 + tabletop 0.026). All DXF-derived XY positions
+remain expressed in `table_origin`. Table support bases rest on the
+floor (`table_origin z = -0.746`).
+
+The camera aluminum profile is parented to a `plc_cabinet_camera_mount`
+frame on the PLC cabinet top, at cabinet-local `(0.548, 0, 0)`. The
+column visually rises from the cabinet rather than floating mid-table;
+the camera body still lands over the DXF orange footprint at world
+`(0.618, 0.407, 1.381)` (still 0.635 m above the tabletop).
+
+### Visual conventions
+
+- xArm 6 home pose published via `joint_state_publisher` `zeros`
+  rosparam in `view_mezzanine.launch`:
+  `joint1=0, joint2=-0.6, joint3=-1.2, joint4=0, joint5=1.5, joint6=0`.
+- Gripper materials: base `aluminum_dark`, body `aluminum_light`,
+  fingers `brushed_aluminum` (defined in `materials.xacro`).
+- Cube grid: 9 differentiated colors on a 3×3 grid; base + 5 mm reborde.
+- Conveyor uses DOBOT Conveyor Belt Kit official spec
+  `0.700 × 0.215 × 0.060 m`; no STEP/SolidWorks CAD found yet on
+  `download.dobot.cc`.
+- Computer footprint (magenta DXF rect) represents the whole
+  workstation; tower uses Lenovo tinker bbox `0.11825 × 0.07239 × 0.0861`
+  with `tinker.obj` mesh slot pending under `meshes/computer/`.
+
+### Workflow expectations (learned)
+
+- Always deliver a written diagnostic + comparison table + ambiguity
+  list BEFORE modifying URDF/Xacro. Wait for explicit user approval.
+- Branch convention: `feature/mezzanine-rviz-simulation`. Never touch
+  `main` directly; go via PR. Convention: `--merge` commit (not squash).
+- Commit author set per-commit via `GIT_AUTHOR_*` env vars
+  (no global git config writes).
+- User prefers Spanish responses and fast pace; gives explicit
+  authorization once and expects continuation.
+- PR template uses Spanish summary + English Test plan checklist.
