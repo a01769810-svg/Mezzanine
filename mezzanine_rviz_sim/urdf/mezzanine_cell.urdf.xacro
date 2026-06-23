@@ -38,21 +38,34 @@
   <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/gripper_adapter.xacro"/>
   <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/computer.xacro"/>
 
+  <!--
+    Frame hierarchy (Phase 1.2):
+      world         = real floor (RViz grid sits here, z=0)
+      table_origin  = lower-left corner of the tabletop top surface
+                      (elevated 0.746 m above the floor:
+                       support base 0.030 + column 0.690 + table 0.026).
+    All XY positions from the DXF stay expressed in the table_origin frame.
+  -->
   <link name="world"/>
 
   <link name="table_origin"/>
   <joint name="world_to_table_origin" type="fixed">
     <parent link="world"/>
     <child link="table_origin"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 0.746" rpy="0 0 0"/>
   </joint>
 
   <xacro:mz_table parent="table_origin"/>
 
+  <!--
+    Table supports: bases sit on the floor (world z=0 ≡ table_origin z=-0.746).
+    Column extends from base top (z=-0.716) to just below the tabletop
+    (z=-0.026). Tabletop occupies z=-0.026..0 in table_origin.
+  -->
   <xacro:mz_table_support side="left"  parent="table_origin"
-                          base_x="0.030" base_y="0.010" base_z="-0.720"/>
+                          base_x="0.030" base_y="0.010" base_z="-0.746"/>
   <xacro:mz_table_support side="right" parent="table_origin"
-                          base_x="1.300" base_y="0.010" base_z="-0.720"/>
+                          base_x="1.300" base_y="0.010" base_z="-0.746"/>
 
   <xacro:mz_plc_cabinet parent="table_origin" x="0.050" y="0.596" z="-0.073"/>
 
@@ -81,14 +94,14 @@
                                  x="0.217" y="0.218" z="0.060"/>
 
   <!--
-    Camera support: column at LL=(0.598, 0.556) (pegada a la cabina, back edge),
-    arm 0.169 m in -y so the camera sits centered over the DXF orange
-    footprint (0.618, 0.407). Z=0.635 m kept from Phase 1 (DXF gives planar XY only).
+    Camera support: aluminum profile parented to the cabinet front face via
+    `plc_cabinet_camera_mount`. Column rises from the cabinet top; arm extends
+    0.209 m in -y so the camera body centers over the DXF orange footprint
+    (world XY = (0.618, 0.407)). camera_z = 0.708 in profile-local frame
+    keeps the camera body at world Z = 1.381 (= table top 0.746 + 0.635).
+    Macro defaults already encode all of this; we just pass the parent.
   -->
-  <xacro:mz_camera_support parent="table_origin"
-                           profile_x="0.598" profile_y="0.556"
-                           profile_arm_len_y="0.169"
-                           camera_z="0.635"/>
+  <xacro:mz_camera_support parent="plc_cabinet_camera_mount"/>
 
   <!-- HMI (light blue RGB 122,175,223 in DXF, LL=(0.650, 0.517)) -->
   <xacro:mz_hmi parent="table_origin" x="0.650" y="0.517" z="0.000"/>

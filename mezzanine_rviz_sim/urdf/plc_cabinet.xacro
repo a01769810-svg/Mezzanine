@@ -31,5 +31,23 @@
       <child link="plc_cabinet"/>
       <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
     </joint>
+
+    <!--
+      Camera mount frame on the PLC cabinet top surface.
+      Position is LOCAL to plc_cabinet link (top-LL-front corner):
+        x = 0.548 -> world X = 0.598 (matches camera column LL X from DXF)
+        y = 0     -> cabinet front face (world Y = 0.596 = table back edge)
+        z = 0     -> cabinet TOP surface
+      The vertical aluminum profile that holds the camera is parented here,
+      so the column visibly rises from the cabinet top instead of floating
+      over the tabletop. Camera body still lands over the DXF footprint
+      center (world XY = (0.618, 0.407)).
+    -->
+    <link name="plc_cabinet_camera_mount"/>
+    <joint name="plc_cabinet_to_plc_cabinet_camera_mount" type="fixed">
+      <parent link="plc_cabinet"/>
+      <child link="plc_cabinet_camera_mount"/>
+      <origin xyz="0.548 0 0" rpy="0 0 0"/>
+    </joint>
   </xacro:macro>
 </robot>

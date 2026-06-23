@@ -1,4 +1,16 @@
-# Measurements - mezzanine_rviz_sim (Phase 1.1, DXF-driven)
+# Measurements - mezzanine_rviz_sim (Phase 1.2, world = floor)
+
+## Phase 1.2 frame hierarchy (world = floor)
+
+- `world` represents the real floor; the RViz grid renders here at z = 0.
+- `table_origin` is a child of `world` elevated at world z = 0.746 m
+  (support base 0.030 + support column 0.690 + tabletop 0.026).
+- All DXF-derived XY positions remain expressed in `table_origin`; nothing
+  about the in-table geometry changed.
+- Table supports bases now rest on the floor (world z = 0 = table_origin z = -0.746).
+- The camera aluminum profile is parented to `plc_cabinet_camera_mount`
+  (on the PLC cabinet top, front face) so the column visibly rises from the
+  cabinet instead of floating in the middle of the table.
 
 ## Origin and units
 

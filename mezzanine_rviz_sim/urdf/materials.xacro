@@ -69,4 +69,17 @@
     <color rgba="0.804 0.412 0.157 1.0"/>
   </material>
 
+  <!-- Aluminum tones for gripper and visual highlight surfaces -->
+  <material name="aluminum_light">
+    <color rgba="0.78 0.78 0.74 1.0"/>
+  </material>
+
+  <material name="aluminum_dark">
+    <color rgba="0.55 0.55 0.52 1.0"/>
+  </material>
+
+  <material name="brushed_aluminum">
+    <color rgba="0.70 0.70 0.66 1.0"/>
+  </material>
+
 </robot>

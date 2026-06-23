@@ -1,13 +1,13 @@
-# Architecture - mezzanine_rviz_sim (Phase 1)
+# Architecture - mezzanine_rviz_sim (Phase 1.2)
 
 ## Scope
 
-Phase 1 produces a static RViz layout of the Mezzanine cell: table, supports, PLC
-cabinet, xArm 6 with a custom pneumatic gripper, conveyor, photoelectric sensor,
-camera with aluminum profile, HMI, Start/E-Stop panel, cubes + cube base, and
-white board. No MoveIt, no Gazebo, no control logic.
+Phase 1.x produces a static RViz layout of the Mezzanine cell: table, supports,
+PLC cabinet, xArm 6 with a custom pneumatic gripper, conveyor, photoelectric
+sensor, camera with aluminum profile, HMI, Start/E-Stop panel, cubes + cube base,
+white board, and a computer workstation. No MoveIt, no Gazebo, no control logic.
 
-## Decisions (approved in handoff)
+## Decisions (approved in handoff + Phase 1.x updates)
 
 1. ROS1 Noetic + catkin (Ubuntu 20.04).
 2. RViz classic (not rviz2).
@@ -16,42 +16,66 @@ white board. No MoveIt, no Gazebo, no control logic.
    `package://xarm_description/...`.
 5. Custom pneumatic gripper (NOT the official UFACTORY gripper).
 6. Modular Xacro: one file per major component.
-7. Origin = lower-left corner of tabletop, z=0 = tabletop surface, units = meters.
+7. **Phase 1.2**: `world` = real floor (RViz grid at z=0). `table_origin` is a
+   child of `world` elevated 0.746 m so the table sits on its supports above
+   the floor. XY measurements in `table_origin` are unchanged from the DXF.
 8. All `xyz_m` in the YAML and Xacro instantiations represent the
    LOWER-LEFT-FRONT CORNER of each component box. The geometry inside each link
    shifts by +size/2 so that link frames sit at the documented anchor point.
+9. **Phase 1.2**: the camera aluminum profile is parented to the PLC cabinet
+   via a `plc_cabinet_camera_mount` frame, so the column visually rises from
+   the cabinet top instead of floating in the middle of the table.
 
-## TF tree
+## TF tree (Phase 1.2)
 
 ```
-world
+world  (real floor, z = 0)
 |
-+-- table_origin (fixed, identity)
++-- table_origin   xyz = (0, 0, 0.746)  -- table top surface
     |
     +-- table_top
-    +-- table_support_left
-    +-- table_support_right
+    +-- table_support_left   (base rests on world floor z=0)
+    +-- table_support_right  (base rests on world floor z=0)
     +-- plc_cabinet
+    |   `-- plc_cabinet_camera_mount   xyz = (0.548, 0, 0)  (cabinet top, front face)
+    |       `-- camera_profile
+    |           `-- camera_frame   (over DXF orange footprint, world Z = 1.381)
     +-- white_board
     +-- cube_base
-    |   `-- cube_01
+    |   +-- cube_base_lip
+    |   `-- cube_00 .. cube_22  (9 cubes, 3x3 grid)
     +-- conveyor_base
     |   `-- photoelectric_sensor
-    +-- camera_profile
-    |   `-- camera_frame
     +-- hmi_panel
+    |   `-- hmi_display
     +-- start_button_panel
     |   +-- start_button
     |   `-- emergency_stop_button
+    +-- computer
     `-- cobot_base
         `-- link_base (xArm; created by xarm_device macro, attached to cobot_base)
             `-- link1 ... link6
                 `-- gripper_tool (fixed)
-                    +-- gripper_base
-                    +-- gripper_body
-                    +-- left_finger
-                    `-- right_finger
+                    +-- gripper_base   (aluminum_dark)
+                    +-- gripper_body   (aluminum_light)
+                    +-- left_finger    (brushed_aluminum)
+                    `-- right_finger   (brushed_aluminum)
 ```
+
+## Home pose (visual only)
+
+`view_mezzanine.launch` sets the `zeros` rosparam namespace on
+`joint_state_publisher` / `joint_state_publisher_gui` to publish an initial
+JointState matching this home pose:
+
+| Joint  | Value (rad) | Notes |
+|--------|-------------|-------|
+| joint1 | 0.0         | base rotation facing +x of table |
+| joint2 | -0.6        | shoulder tilted ~-34 deg |
+| joint3 | -1.2        | elbow bent ~-69 deg |
+| joint4 | 0.0         | wrist roll neutral |
+| joint5 | 1.5         | wrist pitch ~86 deg, gripper looking down |
+| joint6 | 0.0         | tool roll neutral |
 
 ## xArm integration
 

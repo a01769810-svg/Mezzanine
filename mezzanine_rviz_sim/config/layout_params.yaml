@@ -22,6 +22,20 @@ coordinate_system:
   mm_to_m: 0.001
   box_xyz_means: lower_left_front_corner
 
+# Phase 1.2: world = real floor; table_origin elevated above the floor.
+frame_hierarchy:
+  world:
+    role: real_floor
+    rviz_grid_z: 0.0
+  table_origin:
+    parent: world
+    xyz_m_in_parent: [0.0, 0.0, 0.746]
+    derivation: "support_base 0.030 + support_column 0.690 + tabletop 0.026"
+  plc_cabinet_camera_mount:
+    parent: plc_cabinet
+    xyz_m_in_parent: [0.548, 0.0, 0.0]
+    note: "cabinet top surface at the column LL X; camera profile is parented here"
+
 dxf_source:
   file: reference/dxf/EstacionMezzanine.dxf
   units: mm  # $INSUNITS = 4

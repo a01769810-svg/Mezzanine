@@ -1,4 +1,4 @@
-# Validation - mezzanine_rviz_sim (Phase 1.1)
+# Validation - mezzanine_rviz_sim (Phase 1.2)
 
 ## Static parse validation
 
@@ -21,27 +21,33 @@ Expected:
 roslaunch mezzanine_rviz_sim view_mezzanine.launch
 ```
 
-Expected RViz scene (DXF-driven positions):
+Expected RViz scene (DXF-driven positions in table_origin frame; world = floor):
 
-- Fixed Frame `world` valid.
-- Table 1.400 × 0.596 × 0.026 m visible at z = 0.
-- Table supports visible below the tabletop.
-- PLC cabinet at the back edge (0.050, 0.596, -0.073), hanging below.
-- xArm 6 sitting on `cobot_base` at center (0.240, 0.426, 0).
-- Custom gripper attached to xArm's `link6`.
-- Conveyor 0.700 × 0.215 × 0.060 m at LL (0.385, 0.302, 0) on top of the tabletop.
-- Photoelectric sensor body resting near the back edge of the conveyor;
-  world center ~(0.617, 0.530, 0.080).
-- Camera profile: column at LL (0.598, 0.556, 0) pegada a la cabina; arm
-  extends -y by 0.169 m; camera body centered over (0.618, 0.407, 0.635).
-- HMI at LL (0.650, 0.517, 0) sitting between conveyor back edge and PLC cabinet.
-- Start/E-Stop panel at LL (1.170, 0.040, 0). Green start (r=0.019) at
-  (1.220, 0.072) and red E-Stop mushroom (r=0.029) at (1.220, 0.146).
-- Cube base + 9 colored cubes 3×3 at LL (0.020, 0.348, 0).
-- White board / flat plate at LL (0.109, 0.034, 0).
-- Computer workstation footprint at LL (1.137, 0.260); Lenovo tinker tower
-  visible at the back-right of the footprint, monitor centered with stand,
-  keyboard + mouse placeholders in front.
+- Fixed Frame `world` valid; grid renders at world z = 0 (floor).
+- `table_origin` is elevated at world z = 0.746 m (= support base 0.030 +
+  column 0.690 + tabletop 0.026).
+- Table 1.400 × 0.596 × 0.026 m visible with its top at world z = 0.746.
+- Table supports touch the floor: support bases at world z = 0,
+  columns rising to just below the tabletop bottom (world z = 0.720).
+- PLC cabinet hanging from the back edge of the table; cabinet top at
+  world z = 0.673 (table_origin z = -0.073), bottom at world z = 0.173.
+- xArm 6 sitting on `cobot_base` centered at world (0.240, 0.426, 0.746).
+- Custom gripper attached to xArm's `link6`. Aluminum tones:
+  base = aluminum_dark, body = aluminum_light, fingers = brushed_aluminum.
+- xArm shown in the home pose (joint5 ~1.5, joint3 ~-1.2, joint2 ~-0.6).
+- Conveyor 0.700 × 0.215 × 0.060 m at table_origin LL (0.385, 0.302, 0).
+- Photoelectric sensor body resting near the back edge of the conveyor.
+- Camera support: parented to `plc_cabinet_camera_mount` on the PLC cabinet
+  top surface (world (0.598, 0.596, 0.673)). Column rises +Z 0.768 m, arm
+  extends -y by 0.209 m, camera body centered at world (0.618, 0.407, 1.381).
+- HMI at table_origin LL (0.650, 0.517, 0) between conveyor back edge and
+  PLC cabinet front face.
+- Start/E-Stop panel at table_origin LL (1.170, 0.040, 0). Green start
+  (r=0.019) at world (1.220, 0.072, 0.796) and red E-Stop mushroom (r=0.029)
+  at world (1.220, 0.146, 0.796).
+- Cube base + 9 colored cubes 3×3 at table_origin LL (0.020, 0.348, 0).
+- White board / flat plate at table_origin LL (0.109, 0.034, 0).
+- Computer workstation footprint at table_origin LL (1.137, 0.260, 0).
 
 ## Checklist
 
@@ -62,12 +68,32 @@ Expected RViz scene (DXF-driven positions):
 - [ ] Computer workstation footprint matches DXF magenta rectangle; tower at back-right.
 - [ ] All TBD items are explicitly documented and not silently invented.
 
-## TF spot-check
+## TF spot-check (Phase 1.2)
 
 ```bash
+rosrun tf tf_echo world table_origin
+# expected translation: 0.000, 0.000, 0.746
 rosrun tf tf_echo world cobot_base
-# expected translation: 0.240, 0.426, 0.000
+# expected translation: 0.240, 0.426, 0.746
+rosrun tf tf_echo world camera_frame
+# expected translation: 0.618, 0.407, 1.381
+rosrun tf tf_echo world plc_cabinet_camera_mount
+# expected translation: 0.598, 0.596, 0.673
 ```
+
+## Home pose (xArm 6)
+
+`view_mezzanine.launch` publishes initial joint states via the `zeros`
+rosparam. Values used:
+
+```
+joint1 = 0.0     joint2 = -0.6    joint3 = -1.2
+joint4 = 0.0     joint5 = 1.5     joint6 = 0.0
+```
+
+These produce a semi-extended arm pointing toward the work area with the
+gripper looking down. Adjust via the joint_state_publisher_gui sliders to
+explore alternative poses.
 
 ## Known issues / open items
 
