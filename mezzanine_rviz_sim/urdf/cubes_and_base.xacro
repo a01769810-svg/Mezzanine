@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    Cube base (blue fixture) + one demo cube.
+    Cube base: 0.140 x 0.140 x 0.020 m at (0.348, 0.020, 0) m (lower-left-front).
+    Cube_01: 0.040 x 0.040 x 0.050 m sitting on top of the cube base, centered.
+  -->
+  <xacro:property name="cube_base_size_x" value="0.140"/>
+  <xacro:property name="cube_base_size_y" value="0.140"/>
+  <xacro:property name="cube_base_size_z" value="0.020"/>
+
+  <xacro:property name="cube_size_x" value="0.040"/>
+  <xacro:property name="cube_size_y" value="0.040"/>
+  <xacro:property name="cube_size_z" value="0.050"/>
+
+  <xacro:macro name="mz_cube_base" params="parent:=table_origin x:=0.348 y:=0.020 z:=0.000">
+    <link name="cube_base">
+      <visual>
+        <origin xyz="${cube_base_size_x/2} ${cube_base_size_y/2} ${cube_base_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${cube_base_size_x} ${cube_base_size_y} ${cube_base_size_z}"/>
+        </geometry>
+        <material name="mz_blue"/>
+      </visual>
+      <collision>
+        <origin xyz="${cube_base_size_x/2} ${cube_base_size_y/2} ${cube_base_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${cube_base_size_x} ${cube_base_size_y} ${cube_base_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${parent}_to_cube_base" type="fixed">
+      <parent link="${parent}"/>
+      <child link="cube_base"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="cube_01">
+      <visual>
+        <origin xyz="${cube_size_x/2} ${cube_size_y/2} ${cube_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${cube_size_x} ${cube_size_y} ${cube_size_z}"/>
+        </geometry>
+        <material name="mz_orange"/>
+      </visual>
+      <collision>
+        <origin xyz="${cube_size_x/2} ${cube_size_y/2} ${cube_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${cube_size_x} ${cube_size_y} ${cube_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="cube_base_to_cube_01" type="fixed">
+      <parent link="cube_base"/>
+      <child link="cube_01"/>
+      <origin xyz="${cube_base_size_x/2 - cube_size_x/2} ${cube_base_size_y/2 - cube_size_y/2} ${cube_base_size_z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    HMI - Siemens SIMATIC HMI 7" (e.g. KTP700 Basic look).
+    Multi-link:
+      - hmi_panel (base + small support arm on the table)
+      - hmi_display (the tilted display housing with screen)
+    Display is tilted backward ~15 deg for operator viewing.
+    Position xyz = (0.650, 0.425, 0) m is the lower-left-front corner
+    of the base on the tabletop.
+    Dimensions are placeholders consistent with a 7" SIMATIC panel.
+  -->
+  <!-- Base + support -->
+  <xacro:property name="hmi_base_x" value="0.140"/>
+  <xacro:property name="hmi_base_y" value="0.060"/>
+  <xacro:property name="hmi_base_z" value="0.012"/>
+
+  <xacro:property name="hmi_arm_x" value="0.030"/>
+  <xacro:property name="hmi_arm_y" value="0.040"/>
+  <xacro:property name="hmi_arm_z" value="0.080"/>
+
+  <!-- Display housing (Siemens 7" KTP700: ~214 x 41 x 158 mm) -->
+  <xacro:property name="hmi_disp_x" value="0.214"/>
+  <xacro:property name="hmi_disp_y" value="0.041"/>
+  <xacro:property name="hmi_disp_z" value="0.158"/>
+
+  <!-- Active screen area (smaller than bezel) -->
+  <xacro:property name="hmi_scr_x" value="0.160"/>
+  <xacro:property name="hmi_scr_y" value="0.004"/>
+  <xacro:property name="hmi_scr_z" value="0.105"/>
+
+  <xacro:property name="hmi_tilt_deg" value="15"/>
+  <xacro:property name="hmi_tilt_rad" value="${hmi_tilt_deg * 3.14159265 / 180}"/>
+
+  <xacro:macro name="mz_hmi" params="parent:=table_origin x:=0.650 y:=0.425 z:=0.000">
+
+    <!-- hmi_panel: base plate + small support arm (Siemens beige/light gray) -->
+    <link name="hmi_panel">
+      <!-- base plate on the table -->
+      <visual>
+        <origin xyz="${hmi_base_x/2} ${hmi_base_y/2} ${hmi_base_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${hmi_base_x} ${hmi_base_y} ${hmi_base_z}"/>
+        </geometry>
+        <material name="mz_aluminum"/>
+      </visual>
+      <collision>
+        <origin xyz="${hmi_base_x/2} ${hmi_base_y/2} ${hmi_base_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${hmi_base_x} ${hmi_base_y} ${hmi_base_z}"/>
+        </geometry>
+      </collision>
+      <!-- upright support arm at back-center of the base -->
+      <visual>
+        <origin xyz="${hmi_base_x/2} ${hmi_base_y - hmi_arm_y/2} ${hmi_base_z + hmi_arm_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${hmi_arm_x} ${hmi_arm_y} ${hmi_arm_z}"/>
+        </geometry>
+        <material name="mz_aluminum"/>
+      </visual>
+      <collision>
+        <origin xyz="${hmi_base_x/2} ${hmi_base_y - hmi_arm_y/2} ${hmi_base_z + hmi_arm_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${hmi_arm_x} ${hmi_arm_y} ${hmi_arm_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${parent}_to_hmi_panel" type="fixed">
+      <parent link="${parent}"/>
+      <child link="hmi_panel"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- hmi_display: the Siemens panel; tilted backward (rpy x) -->
+    <link name="hmi_display">
+      <!-- bezel / casing -->
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${hmi_disp_x} ${hmi_disp_y} ${hmi_disp_z}"/>
+        </geometry>
+        <material name="mz_panel_white"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${hmi_disp_x} ${hmi_disp_y} ${hmi_disp_z}"/>
+        </geometry>
+      </collision>
+      <!-- screen face on front (=-y of the display in display local frame) -->
+      <visual>
+        <origin xyz="0 ${-hmi_disp_y/2 - hmi_scr_y/2} 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${hmi_scr_x} ${hmi_scr_y} ${hmi_scr_z}"/>
+        </geometry>
+        <material name="mz_hmi_dark"/>
+      </visual>
+    </link>
+
+    <!--
+      Place hmi_display centered above the support arm, tilted backward ~15 deg
+      (rotating about world x so that the screen face leans toward the operator).
+    -->
+    <joint name="hmi_panel_to_hmi_display" type="fixed">
+      <parent link="hmi_panel"/>
+      <child link="hmi_display"/>
+      <origin xyz="${hmi_base_x/2}
+                   ${hmi_base_y - hmi_arm_y/2 + hmi_disp_y/2 * 0.5}
+                   ${hmi_base_z + hmi_arm_z + hmi_disp_z/2 - 0.010}"
+              rpy="${hmi_tilt_rad} 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

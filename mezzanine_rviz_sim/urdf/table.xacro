@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    Table. Special case for the corner convention:
+    The TOP surface of the table is the documented z=0 plane (origin definition).
+    The table extends DOWN: from z=0 to z=-0.026. Geometry center sits at z=-0.013.
+  -->
+  <xacro:property name="table_size_x" value="1.400"/>
+  <xacro:property name="table_size_y" value="0.596"/>
+  <xacro:property name="table_size_z" value="0.026"/>
+
+  <xacro:macro name="mz_table" params="parent:=table_origin">
+    <link name="table_top">
+      <visual>
+        <origin xyz="${table_size_x/2} ${table_size_y/2} ${-table_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${table_size_x} ${table_size_y} ${table_size_z}"/>
+        </geometry>
+        <material name="mz_table_metal"/>
+      </visual>
+      <collision>
+        <origin xyz="${table_size_x/2} ${table_size_y/2} ${-table_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${table_size_x} ${table_size_y} ${table_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${parent}_to_table_top" type="fixed">
+      <parent link="${parent}"/>
+      <child link="table_top"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

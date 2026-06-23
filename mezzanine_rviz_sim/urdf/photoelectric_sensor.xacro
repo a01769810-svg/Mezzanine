@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    Photoelectric sensor. Dimensions are placeholders (TBD).
+    Reported (21, 12, 5) cm is treated as LOCAL to the conveyor.
+    The sensor is attached as child of conveyor_base.
+  -->
+  <xacro:property name="ps_size_x" value="0.030"/>
+  <xacro:property name="ps_size_y" value="0.020"/>
+  <xacro:property name="ps_size_z" value="0.040"/>
+
+  <xacro:macro name="mz_photoelectric_sensor" params="parent:=conveyor_base x:=0.210 y:=0.120 z:=0.050">
+    <link name="photoelectric_sensor">
+      <visual>
+        <origin xyz="${ps_size_x/2} ${ps_size_y/2} ${ps_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${ps_size_x} ${ps_size_y} ${ps_size_z}"/>
+        </geometry>
+        <material name="mz_sensor_yellow"/>
+      </visual>
+      <collision>
+        <origin xyz="${ps_size_x/2} ${ps_size_y/2} ${ps_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${ps_size_x} ${ps_size_y} ${ps_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${parent}_to_photoelectric_sensor" type="fixed">
+      <parent link="${parent}"/>
+      <child link="photoelectric_sensor"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

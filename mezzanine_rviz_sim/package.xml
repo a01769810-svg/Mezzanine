@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mezzanine_rviz_sim</name>
+  <version>0.1.0</version>
+  <description>
+    RViz visualization of the Mezzanine industrial station (xArm 6 + custom
+    pneumatic gripper + conveyor + HMI + camera + cubes). Phase 1: layout-only
+    URDF/Xacro with correct TF and metric scale. No MoveIt, no Gazebo.
+  </description>
+
+  <maintainer email="miguelaor681@outlook.com">Mezzanine Team</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>xacro</build_depend>
+  <build_depend>xarm_description</build_depend>
+
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>xarm_description</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>urdf</exec_depend>
+
+  <export>
+  </export>
+</package>

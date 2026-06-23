@@ -1,0 +1,106 @@
+# Mezzanine layout parameters for ROS/RViz - mezzanine_rviz_sim package
+# Phase 1 working copy. Source of truth lives at:
+#   reference/mezzanine_photos_measurements/00_medidas_y_layout/layout_ros_params_m.yaml
+#
+# Units: meters. Source measurements were provided in centimeters (cm * 0.01).
+# Coordinate origin: lower-left corner of tabletop, z=0 at tabletop surface.
+# Convention: every xyz_m is the LOWER-LEFT-FRONT CORNER of the component box,
+# NOT the geometric center. URDF geometry origins offset by +size/2 to compensate.
+
+coordinate_system:
+  origin: lower_left_corner_of_tabletop
+  x_axis: table_length
+  y_axis: table_width
+  z_axis: height
+  table_surface_z_m: 0.0
+  cm_to_m: 0.01
+  box_xyz_means: lower_left_front_corner
+
+dimensions:
+  table:
+    size_m: [1.400, 0.596, 0.026]
+    corner_plastic_thickness_m: 0.003
+  table_support_base:
+    count: 2
+    size_m: [0.070, 0.576, 0.030]
+  table_support_column:
+    size_m: [0.040, 0.194, 0.690]
+    local_position_in_base_m: [0.010, 0.310, 0.030]
+  plc_cabinet:
+    size_m: [0.700, 0.250, 0.500]
+  cube:
+    size_m: [0.040, 0.040, 0.050]
+  cube_base:
+    size_m: [0.140, 0.140, 0.020]
+    lip_or_cutout_thickness_m: 0.005
+  white_board:
+    size_m: [0.303, 0.227, 0.020]
+  gripper:
+    working_area_m: 0.044
+    total_width_m: 0.060
+    finger_thickness_m: 0.008
+    finger_height_m: 0.030      # TBD - placeholder
+    base_size_m: [0.080, 0.080, 0.006]
+    body_size_m: [0.060, 0.060, 0.040]  # TBD - placeholder for actuator body
+  conveyor:
+    size_m: [0.400, 0.132, 0.055]  # length TBD - placeholder 0.400 m
+    length_status: TBD
+  photoelectric_sensor:
+    size_m: [0.030, 0.020, 0.040]  # TBD - placeholder dims
+  camera_profile:
+    cross_section_m: [0.040, 0.040]
+    vertical_length_m: 0.720    # TBD - placeholder so camera reaches ~0.635 m
+    horizontal_arm_length_m: 0.180  # TBD - placeholder for arm reaching camera
+    camera_height_from_table_m: 0.635
+  camera:
+    size_m: [0.060, 0.060, 0.060]  # TBD - placeholder
+  hmi:
+    size_m: [0.200, 0.050, 0.150]  # TBD - placeholder dims
+  buttons_panel:
+    size_m: [0.100, 0.150, 0.050]  # TBD - placeholder dims
+    button_radius_m: 0.020
+    button_height_m: 0.012
+
+# All positions are LOWER-LEFT-FRONT CORNER of the component box,
+# expressed in the table_origin frame, EXCEPT cobot_base (see below).
+positions:
+  # EXCEPTION: cobot_base xyz_m is the CENTER of the circular cobot base,
+  # NOT a corner. The xArm 6 mounts centered on this point.
+  cobot_base:
+    xyz_m_center: [0.240, 0.425, 0.000]
+    anchor: center_of_circular_base
+  cube_base:
+    xyz_m: [0.110, 0.030, 0.000]   # revised: left of cobot (was 0.348, 0.020)
+    status: revised_user_feedback
+  conveyor:
+    xyz_m: [0.500, 0.300, 0.000]   # revised: further right (was 0.385, 0.300)
+    status: revised_user_feedback
+  photoelectric_sensor:
+    xyz_cm_reported: [21, 12, 5]
+    interpretation: local_to_conveyor_probable
+    xyz_m_absolute_assumed: [0.595, 0.420, 0.050]
+    status: TBD
+  hmi:
+    xyz_m: [0.650, 0.425, 0.000]
+  start_emergency_panel:
+    xyz_m: [1.170, 0.040, 0.000]
+  white_board:
+    xyz_m: [0.090, 0.035, 0.000]
+  plc_cabinet:
+    xyz_m: [0.050, 0.596, -0.073]
+    note: "y=0.596 is the back edge of the table; the cabinet sits at the back edge."
+  computer:
+    xyz_m: [1.250, 0.030, 0.000]
+    status: placeholder_added
+    note: "Right side of the table per user feedback. Tower + monitor placeholder; exact position TBD."
+  camera:
+    xyz_m_assumed: [0.710, 0.260, 0.635]
+    status: TBD
+    note: "Above photoelectric sensor (sensor at conveyor-local +0.21 in x). Column pegado a la cabina (profile_y=0.556); arm length 0.316 m."
+  camera_profile:
+    xyz_m_corner: [0.690, 0.556, 0.000]
+    note: "Vertical column lower-left-front corner; back edge adjacent to PLC cabinet (pegado a la cabina) per user feedback."
+  table_support_left:
+    xyz_m: [0.030, 0.010, -0.720]   # placeholder; column reaches 0.030 + 0.690 = 0.720 below tabletop top
+  table_support_right:
+    xyz_m: [1.300, 0.010, -0.720]   # placeholder mirrored to right side of table

@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    Computer placeholder on the RIGHT side of the table.
+    Position xyz = lower-left-front corner of the workstation footprint.
+    Workstation = a vertical tower (black box) + a flat monitor with stand.
+    Dimensions are placeholders (TBD - to confirm against photos).
+  -->
+  <xacro:property name="tower_size_x" value="0.090"/>
+  <xacro:property name="tower_size_y" value="0.230"/>
+  <xacro:property name="tower_size_z" value="0.380"/>
+
+  <xacro:property name="mon_stand_x" value="0.140"/>
+  <xacro:property name="mon_stand_y" value="0.180"/>
+  <xacro:property name="mon_stand_z" value="0.020"/>
+
+  <xacro:property name="mon_col_x" value="0.030"/>
+  <xacro:property name="mon_col_y" value="0.030"/>
+  <xacro:property name="mon_col_z" value="0.090"/>
+
+  <xacro:property name="mon_size_x" value="0.450"/>
+  <xacro:property name="mon_size_y" value="0.030"/>
+  <xacro:property name="mon_size_z" value="0.260"/>
+
+  <xacro:property name="mon_scr_x" value="0.410"/>
+  <xacro:property name="mon_scr_y" value="0.004"/>
+  <xacro:property name="mon_scr_z" value="0.230"/>
+
+  <xacro:macro name="mz_computer" params="parent:=table_origin x:=1.250 y:=0.030 z:=0.000">
+
+    <link name="computer">
+      <!-- Tower (CPU box, vertical) -->
+      <visual>
+        <origin xyz="${tower_size_x/2} ${tower_size_y/2} ${tower_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${tower_size_x} ${tower_size_y} ${tower_size_z}"/>
+        </geometry>
+        <material name="mz_dark_gray"/>
+      </visual>
+      <collision>
+        <origin xyz="${tower_size_x/2} ${tower_size_y/2} ${tower_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${tower_size_x} ${tower_size_y} ${tower_size_z}"/>
+        </geometry>
+      </collision>
+
+      <!-- Monitor stand -->
+      <visual>
+        <origin xyz="${tower_size_x + 0.020 + mon_stand_x/2} ${mon_stand_y/2 + 0.020} ${mon_stand_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${mon_stand_x} ${mon_stand_y} ${mon_stand_z}"/>
+        </geometry>
+        <material name="mz_dark_gray"/>
+      </visual>
+
+      <!-- Monitor column (riser) -->
+      <visual>
+        <origin xyz="${tower_size_x + 0.020 + mon_stand_x/2}
+                     ${mon_stand_y/2 + 0.020}
+                     ${mon_stand_z + mon_col_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${mon_col_x} ${mon_col_y} ${mon_col_z}"/>
+        </geometry>
+        <material name="mz_dark_gray"/>
+      </visual>
+
+      <!-- Monitor body (bezel) -->
+      <visual>
+        <origin xyz="${tower_size_x + 0.020 + mon_stand_x/2}
+                     ${mon_stand_y/2 + 0.020}
+                     ${mon_stand_z + mon_col_z + mon_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${mon_size_x} ${mon_size_y} ${mon_size_z}"/>
+        </geometry>
+        <material name="mz_dark_gray"/>
+      </visual>
+
+      <!-- Screen face on front (-y of monitor body) -->
+      <visual>
+        <origin xyz="${tower_size_x + 0.020 + mon_stand_x/2}
+                     ${mon_stand_y/2 + 0.020 - mon_size_y/2 - mon_scr_y/2}
+                     ${mon_stand_z + mon_col_z + mon_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${mon_scr_x} ${mon_scr_y} ${mon_scr_z}"/>
+        </geometry>
+        <material name="mz_hmi_dark"/>
+      </visual>
+    </link>
+
+    <joint name="${parent}_to_computer" type="fixed">
+      <parent link="${parent}"/>
+      <child link="computer"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

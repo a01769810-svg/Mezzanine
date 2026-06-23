@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    Start + Emergency Stop panel.
+    Panel placeholder size 0.10 x 0.15 x 0.05 m (TBD).
+    Position xyz = (1.170, 0.040, 0) m is the lower-left-front corner.
+    Two cylindrical buttons mounted on TOP face: green Start and red E-Stop.
+  -->
+  <xacro:property name="panel_size_x" value="0.100"/>
+  <xacro:property name="panel_size_y" value="0.150"/>
+  <xacro:property name="panel_size_z" value="0.050"/>
+
+  <xacro:property name="btn_radius" value="0.020"/>
+  <xacro:property name="btn_height" value="0.012"/>
+
+  <xacro:macro name="mz_buttons_panel" params="parent:=table_origin x:=1.170 y:=0.040 z:=0.000">
+    <link name="start_button_panel">
+      <visual>
+        <origin xyz="${panel_size_x/2} ${panel_size_y/2} ${panel_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${panel_size_x} ${panel_size_y} ${panel_size_z}"/>
+        </geometry>
+        <material name="mz_panel_white"/>
+      </visual>
+      <collision>
+        <origin xyz="${panel_size_x/2} ${panel_size_y/2} ${panel_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${panel_size_x} ${panel_size_y} ${panel_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${parent}_to_start_button_panel" type="fixed">
+      <parent link="${parent}"/>
+      <child link="start_button_panel"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="start_button">
+      <visual>
+        <origin xyz="0 0 ${btn_height/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${btn_radius}" length="${btn_height}"/>
+        </geometry>
+        <material name="mz_green"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${btn_height/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${btn_radius}" length="${btn_height}"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="start_button_panel_to_start_button" type="fixed">
+      <parent link="start_button_panel"/>
+      <child link="start_button"/>
+      <origin xyz="${panel_size_x/2} ${panel_size_y*0.3} ${panel_size_z}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="emergency_stop_button">
+      <visual>
+        <origin xyz="0 0 ${btn_height/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${btn_radius}" length="${btn_height}"/>
+        </geometry>
+        <material name="mz_red"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${btn_height/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${btn_radius}" length="${btn_height}"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="start_button_panel_to_emergency_stop_button" type="fixed">
+      <parent link="start_button_panel"/>
+      <child link="emergency_stop_button"/>
+      <origin xyz="${panel_size_x/2} ${panel_size_y*0.7} ${panel_size_z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>

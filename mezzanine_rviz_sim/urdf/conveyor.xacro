@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--
+    Conveyor. Width 0.132 m, thickness 0.055 m confirmed.
+    Length TBD - placeholder 0.400 m.
+    Position: lower-left-front corner at (0.385, 0.300, 0.000) m.
+  -->
+  <xacro:property name="conveyor_size_x" value="0.400"/>
+  <xacro:property name="conveyor_size_y" value="0.132"/>
+  <xacro:property name="conveyor_size_z" value="0.055"/>
+
+  <xacro:macro name="mz_conveyor" params="parent:=table_origin x:=0.385 y:=0.300 z:=0.000">
+    <link name="conveyor_base">
+      <visual>
+        <origin xyz="${conveyor_size_x/2} ${conveyor_size_y/2} ${conveyor_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${conveyor_size_x} ${conveyor_size_y} ${conveyor_size_z}"/>
+        </geometry>
+        <material name="mz_conveyor_belt"/>
+      </visual>
+      <collision>
+        <origin xyz="${conveyor_size_x/2} ${conveyor_size_y/2} ${conveyor_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${conveyor_size_x} ${conveyor_size_y} ${conveyor_size_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${parent}_to_conveyor_base" type="fixed">
+      <parent link="${parent}"/>
+      <child link="conveyor_base"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>
