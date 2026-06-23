@@ -39,7 +39,7 @@
         <geometry>
           <box size="${gb_size_x} ${gb_size_y} ${gb_size_z}"/>
         </geometry>
-        <material name="mz_dark_gray"/>
+        <material name="aluminum_dark"/>
       </visual>
       <collision>
         <origin xyz="0 0 ${gb_size_z/2}" rpy="0 0 0"/>
@@ -60,7 +60,7 @@
         <geometry>
           <box size="${body_size_x} ${body_size_y} ${body_size_z}"/>
         </geometry>
-        <material name="mz_dark_gray"/>
+        <material name="aluminum_light"/>
       </visual>
       <collision>
         <origin xyz="0 0 ${body_size_z/2}" rpy="0 0 0"/>
@@ -81,7 +81,7 @@
         <geometry>
           <box size="${finger_thickness} ${finger_thickness} ${finger_height}"/>
         </geometry>
-        <material name="mz_dark_gray"/>
+        <material name="brushed_aluminum"/>
       </visual>
       <collision>
         <origin xyz="0 0 ${finger_height/2}" rpy="0 0 0"/>
@@ -102,7 +102,7 @@
         <geometry>
           <box size="${finger_thickness} ${finger_thickness} ${finger_height}"/>
         </geometry>
-        <material name="mz_dark_gray"/>
+        <material name="brushed_aluminum"/>
       </visual>
       <collision>
         <origin xyz="0 0 ${finger_height/2}" rpy="0 0 0"/>

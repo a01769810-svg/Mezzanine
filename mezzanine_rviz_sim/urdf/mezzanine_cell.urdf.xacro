@@ -38,64 +38,84 @@
   <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/gripper_adapter.xacro"/>
   <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/computer.xacro"/>
 
+  <!--
+    Frame hierarchy (Phase 1.2):
+      world         = real floor (RViz grid sits here, z=0)
+      table_origin  = lower-left corner of the tabletop top surface
+                      (elevated 0.746 m above the floor:
+                       support base 0.030 + column 0.690 + table 0.026).
+    All XY positions from the DXF stay expressed in the table_origin frame.
+  -->
   <link name="world"/>
 
   <link name="table_origin"/>
   <joint name="world_to_table_origin" type="fixed">
     <parent link="world"/>
     <child link="table_origin"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 0.746" rpy="0 0 0"/>
   </joint>
 
   <xacro:mz_table parent="table_origin"/>
 
+  <!--
+    Table supports: bases sit on the floor (world z=0 ≡ table_origin z=-0.746).
+    Column extends from base top (z=-0.716) to just below the tabletop
+    (z=-0.026). Tabletop occupies z=-0.026..0 in table_origin.
+  -->
   <xacro:mz_table_support side="left"  parent="table_origin"
-                          base_x="0.030" base_y="0.010" base_z="-0.720"/>
+                          base_x="0.030" base_y="0.010" base_z="-0.746"/>
   <xacro:mz_table_support side="right" parent="table_origin"
-                          base_x="1.300" base_y="0.010" base_z="-0.720"/>
+                          base_x="1.300" base_y="0.010" base_z="-0.746"/>
 
   <xacro:mz_plc_cabinet parent="table_origin" x="0.050" y="0.596" z="-0.073"/>
 
-  <xacro:mz_white_board parent="table_origin" x="0.090" y="0.035" z="0.000"/>
+  <!-- White board / flat plate (red rect in DXF, LL=(0.109, 0.034)) -->
+  <xacro:mz_white_board parent="table_origin" x="0.109" y="0.034" z="0.000"/>
 
   <!--
-    cube_base: revised to left-of-cobot per user feedback (was 0.348, 0.020).
-    Cobot center at x=0.240; cubes now sit at x=0.110 (left side, front edge).
-    TBD: confirm against physical layout in Phase 2.
+    cube_base (orange RGB 205,105,40 in DXF, LL=(0.020, 0.348)):
+    140x140 outer with 5 mm reborde and 9 cubes in a 3x3 grid (DXF yellow).
+    Cubes are color-differentiated (red, green, blue, yellow, orange, white,
+    magenta, cyan, dark_gray).
   -->
-  <xacro:mz_cube_base parent="table_origin" x="0.110" y="0.030" z="0.000"/>
+  <xacro:mz_cube_base parent="table_origin" x="0.020" y="0.348" z="0.000"/>
 
   <!--
-    Conveyor: revised to be further right per user feedback (was x=0.385).
-    Now at x=0.500. With 0.400 m length placeholder it extends 0.500..0.900.
-    TBD: confirm exact length and x against physical layout.
+    Conveyor (DOBOT Conveyor Belt Kit, blue in DXF, LL=(0.385, 0.302)):
+    official dimensions 0.700 x 0.215 x 0.060 m.
   -->
-  <xacro:mz_conveyor parent="table_origin" x="0.500" y="0.300" z="0.000"/>
+  <xacro:mz_conveyor parent="table_origin" x="0.385" y="0.302" z="0.000"/>
 
+  <!--
+    Photoelectric sensor body (cream RGB 248,246,176 U-shape in DXF):
+    center world (0.617, 0.530, ~0.060); local on conveyor_base = (0.217, 0.218, 0.060).
+  -->
   <xacro:mz_photoelectric_sensor parent="conveyor_base"
-                                 x="0.210" y="0.120" z="0.050"/>
+                                 x="0.217" y="0.218" z="0.060"/>
 
   <!--
-    Camera support: vertical column moved to back edge (pegado a la cabina)
-    per user feedback. profile_y=0.556 puts the column right behind the
-    PLC cabinet zone; arm length 0.316 m brings camera over the sensor area
-    at (~0.710, ~0.260, 0.635).
+    Camera support: aluminum profile parented to the cabinet front face via
+    `plc_cabinet_camera_mount`. Column rises from the cabinet top; arm extends
+    0.209 m in -y so the camera body centers over the DXF orange footprint
+    (world XY = (0.618, 0.407)). camera_z = 0.708 in profile-local frame
+    keeps the camera body at world Z = 1.381 (= table top 0.746 + 0.635).
+    Macro defaults already encode all of this; we just pass the parent.
   -->
-  <xacro:mz_camera_support parent="table_origin"
-                           profile_x="0.690" profile_y="0.556"
-                           profile_arm_len_y="0.316"
-                           camera_z="0.635"/>
+  <xacro:mz_camera_support parent="plc_cabinet_camera_mount"/>
 
-  <xacro:mz_hmi parent="table_origin" x="0.650" y="0.425" z="0.000"/>
+  <!-- HMI (light blue RGB 122,175,223 in DXF, LL=(0.650, 0.517)) -->
+  <xacro:mz_hmi parent="table_origin" x="0.650" y="0.517" z="0.000"/>
 
+  <!-- Start/E-Stop panel (cyan in DXF, LL=(1.170, 0.040)) -->
   <xacro:mz_buttons_panel parent="table_origin"
                           x="1.170" y="0.040" z="0.000"/>
 
   <!--
-    Computer: TBD position - placed at right side of the table per user
-    feedback. Tower + monitor placeholder.
+    Computer workstation footprint (magenta in DXF, LL=(1.137, 0.260)):
+    372 x 432 mm visual approximation containing tower + monitor + keyboard + mouse.
+    Footprint extends past the table edges (X: 1.137..1.509, Y: 0.260..0.692).
   -->
-  <xacro:mz_computer parent="table_origin" x="1.250" y="0.030" z="0.000"/>
+  <xacro:mz_computer parent="table_origin" x="1.137" y="0.260" z="0.000"/>
 
   <!--
     cobot_base: EXCEPTION to the lower-left-corner convention.

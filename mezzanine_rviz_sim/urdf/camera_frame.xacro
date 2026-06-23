@@ -1,23 +1,42 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <!--
-    Camera support: vertical aluminum profile (4x4 cm cross section) standing
-    at sensor xy with height 0.720 m (TBD placeholder), plus a horizontal arm
-    extending in -y to support the camera. Camera placed at the documented
-    position (0.595, 0.260, 0.635) m.
+    Camera support: vertical aluminum profile (4x4 cm cross section)
+    mounted to the PLC cabinet top via the `plc_cabinet_camera_mount`
+    frame, with a horizontal arm extending in -y to hold the camera over
+    the DXF orange footprint (world XY = (0.618, 0.407)).
+
+    Default parent = plc_cabinet_camera_mount (child of plc_cabinet).
+    Mount world frame after the world=floor lift:
+      world XY = (0.598, 0.596)  (cabinet front face at column LL X)
+      world Z  = 0.673           (cabinet top surface = table_origin Z=-0.073)
+
+    With profile_x=profile_y=profile_z=0, the column LL coincides with the
+    mount, so the column body extends from the cabinet front face onto the
+    cabinet top (Y 0.596 to 0.636 in world) and rises in +Z.
+
+    Camera Z target: world Z = 1.381 (kept 0.635 m above the table top).
+    Because the column LL is now at world Z = 0.673 instead of 0.746,
+    camera_z (profile-local) = 1.381 - 0.673 = 0.708 m.
+    profile_vertical_len bumped to 0.768 m so the arm (at vertical_len - cs_y/2
+    = 0.748) sits above the camera with ~0.040 m margin.
+    Arm length to bring camera centre to world Y = 0.407:
+      world Y_arm_end = profile_y_world + cs_y/2 - arm_len_y
+      0.407 = 0.596 + 0.020 - arm_len_y -> arm_len_y = 0.209 m.
   -->
   <xacro:property name="profile_cs_x" value="0.040"/>
   <xacro:property name="profile_cs_y" value="0.040"/>
-  <xacro:property name="profile_vertical_len" value="0.720"/>
+  <xacro:property name="profile_vertical_len" value="0.768"/>
   <xacro:property name="camera_size_x" value="0.060"/>
   <xacro:property name="camera_size_y" value="0.060"/>
   <xacro:property name="camera_size_z" value="0.060"/>
 
-  <xacro:macro name="mz_camera_support" params="parent:=table_origin
-                                                 profile_x:=0.575
-                                                 profile_y:=0.400
-                                                 profile_arm_len_y:=0.180
-                                                 camera_z:=0.635">
+  <xacro:macro name="mz_camera_support" params="parent:=plc_cabinet_camera_mount
+                                                 profile_x:=0
+                                                 profile_y:=0
+                                                 profile_z:=0
+                                                 profile_arm_len_y:=0.209
+                                                 camera_z:=0.708">
     <link name="camera_profile">
       <!-- vertical aluminum column -->
       <visual>
@@ -52,7 +71,7 @@
     <joint name="${parent}_to_camera_profile" type="fixed">
       <parent link="${parent}"/>
       <child link="camera_profile"/>
-      <origin xyz="${profile_x} ${profile_y} 0" rpy="0 0 0"/>
+      <origin xyz="${profile_x} ${profile_y} ${profile_z}" rpy="0 0 0"/>
     </joint>
 
     <link name="camera_frame">

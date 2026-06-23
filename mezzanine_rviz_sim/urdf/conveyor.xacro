@@ -1,15 +1,18 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <!--
-    Conveyor. Width 0.132 m, thickness 0.055 m confirmed.
-    Length TBD - placeholder 0.400 m.
-    Position: lower-left-front corner at (0.385, 0.300, 0.000) m.
+    Conveyor.
+    Model: DOBOT Conveyor Belt Kit (official spec).
+    Official dimensions: 700 x 215 x 60 mm = 0.700 x 0.215 x 0.060 m.
+    Position (from EstacionMezzanine.dxf): table-frame LL corner = (0.385, 0.302, 0).
+    Notes: effective_travel ~= 0.600 m, payload 0.5 kg, max speed 0.120 m/s.
+    Official STEP/SolidWorks file not yet located (see layout_params.yaml).
   -->
-  <xacro:property name="conveyor_size_x" value="0.400"/>
-  <xacro:property name="conveyor_size_y" value="0.132"/>
-  <xacro:property name="conveyor_size_z" value="0.055"/>
+  <xacro:property name="conveyor_size_x" value="0.700"/>
+  <xacro:property name="conveyor_size_y" value="0.215"/>
+  <xacro:property name="conveyor_size_z" value="0.060"/>
 
-  <xacro:macro name="mz_conveyor" params="parent:=table_origin x:=0.385 y:=0.300 z:=0.000">
+  <xacro:macro name="mz_conveyor" params="parent:=table_origin x:=0.385 y:=0.302 z:=0.000">
     <link name="conveyor_base">
       <visual>
         <origin xyz="${conveyor_size_x/2} ${conveyor_size_y/2} ${conveyor_size_z/2}" rpy="0 0 0"/>

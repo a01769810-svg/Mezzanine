@@ -1,26 +1,59 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <!--
-    Cube base (blue fixture) + one demo cube.
-    Cube base: 0.140 x 0.140 x 0.020 m at (0.348, 0.020, 0) m (lower-left-front).
-    Cube_01: 0.040 x 0.040 x 0.050 m sitting on top of the cube base, centered.
+    Cube base + 9 cubes in a 3x3 grid.
+    Positions and counts come from EstacionMezzanine.dxf:
+      - base (orange RGB 205,105,40): outer 140x140 mm, inner 130x130 mm
+        (5 mm reborde / lip) at table-frame LL=(0.020, 0.348).
+      - 9 cubes (yellow in DXF): 40x40x40 footprint, grid 3x3, centered on base.
+    Local layout in cube_base frame:
+      - base LL at (0,0,0), size 0.140 x 0.140 x 0.020.
+      - 5 mm lip occupies the outer 5 mm; cube grid spans local
+        (0.010, 0.010) to (0.130, 0.130).
+      - cube[i][j] LL local = (0.010 + j*0.040, 0.010 + i*0.040, 0.020).
+    Cubes are color-differentiated for clarity (mz_red, mz_green, mz_blue,
+    mz_yellow, mz_orange, mz_white, mz_magenta, mz_cyan, mz_dark_gray).
   -->
   <xacro:property name="cube_base_size_x" value="0.140"/>
   <xacro:property name="cube_base_size_y" value="0.140"/>
   <xacro:property name="cube_base_size_z" value="0.020"/>
+  <xacro:property name="cube_base_lip"    value="0.005"/>
+  <xacro:property name="lip_h"            value="0.005"/>
 
-  <xacro:property name="cube_size_x" value="0.040"/>
-  <xacro:property name="cube_size_y" value="0.040"/>
-  <xacro:property name="cube_size_z" value="0.050"/>
+  <xacro:property name="cube_size" value="0.040"/>
 
-  <xacro:macro name="mz_cube_base" params="parent:=table_origin x:=0.348 y:=0.020 z:=0.000">
+  <xacro:macro name="mz_cube" params="name x_local y_local z_local material">
+    <link name="${name}">
+      <visual>
+        <origin xyz="${cube_size/2} ${cube_size/2} ${cube_size/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${cube_size} ${cube_size} ${cube_size}"/>
+        </geometry>
+        <material name="${material}"/>
+      </visual>
+      <collision>
+        <origin xyz="${cube_size/2} ${cube_size/2} ${cube_size/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${cube_size} ${cube_size} ${cube_size}"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="cube_base_to_${name}" type="fixed">
+      <parent link="cube_base"/>
+      <child link="${name}"/>
+      <origin xyz="${x_local} ${y_local} ${z_local}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="mz_cube_base" params="parent:=table_origin x:=0.020 y:=0.348 z:=0.000">
+    <!-- Base body (orange RGB 205,105,40 per DXF) -->
     <link name="cube_base">
       <visual>
         <origin xyz="${cube_base_size_x/2} ${cube_base_size_y/2} ${cube_base_size_z/2}" rpy="0 0 0"/>
         <geometry>
           <box size="${cube_base_size_x} ${cube_base_size_y} ${cube_base_size_z}"/>
         </geometry>
-        <material name="mz_blue"/>
+        <material name="mz_cube_base_brown"/>
       </visual>
       <collision>
         <origin xyz="${cube_base_size_x/2} ${cube_base_size_y/2} ${cube_base_size_z/2}" rpy="0 0 0"/>
@@ -35,25 +68,61 @@
       <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
     </joint>
 
-    <link name="cube_01">
+    <!--
+      5 mm reborde: thin frame around the inner pocket on top of the base.
+      Visual hint only; collision stays the base block.
+    -->
+    <link name="cube_base_lip">
       <visual>
-        <origin xyz="${cube_size_x/2} ${cube_size_y/2} ${cube_size_z/2}" rpy="0 0 0"/>
+        <origin xyz="${cube_base_size_x/2} ${cube_base_lip/2} ${cube_base_size_z + lip_h/2}" rpy="0 0 0"/>
         <geometry>
-          <box size="${cube_size_x} ${cube_size_y} ${cube_size_z}"/>
+          <box size="${cube_base_size_x} ${cube_base_lip} ${lip_h}"/>
         </geometry>
-        <material name="mz_orange"/>
+        <material name="mz_cube_base_brown"/>
       </visual>
-      <collision>
-        <origin xyz="${cube_size_x/2} ${cube_size_y/2} ${cube_size_z/2}" rpy="0 0 0"/>
+      <visual>
+        <origin xyz="${cube_base_size_x/2} ${cube_base_size_y - cube_base_lip/2} ${cube_base_size_z + lip_h/2}" rpy="0 0 0"/>
         <geometry>
-          <box size="${cube_size_x} ${cube_size_y} ${cube_size_z}"/>
+          <box size="${cube_base_size_x} ${cube_base_lip} ${lip_h}"/>
         </geometry>
-      </collision>
+        <material name="mz_cube_base_brown"/>
+      </visual>
+      <visual>
+        <origin xyz="${cube_base_lip/2} ${cube_base_size_y/2} ${cube_base_size_z + lip_h/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${cube_base_lip} ${cube_base_size_y} ${lip_h}"/>
+        </geometry>
+        <material name="mz_cube_base_brown"/>
+      </visual>
+      <visual>
+        <origin xyz="${cube_base_size_x - cube_base_lip/2} ${cube_base_size_y/2} ${cube_base_size_z + lip_h/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${cube_base_lip} ${cube_base_size_y} ${lip_h}"/>
+        </geometry>
+        <material name="mz_cube_base_brown"/>
+      </visual>
     </link>
-    <joint name="cube_base_to_cube_01" type="fixed">
+    <joint name="cube_base_to_cube_base_lip" type="fixed">
       <parent link="cube_base"/>
-      <child link="cube_01"/>
-      <origin xyz="${cube_base_size_x/2 - cube_size_x/2} ${cube_base_size_y/2 - cube_size_y/2} ${cube_base_size_z}" rpy="0 0 0"/>
+      <child link="cube_base_lip"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
+
+    <!--
+      3x3 grid of 40 mm cubes. Row index i (0..2) increases in +y;
+      column index j (0..2) increases in +x. Grid origin local to
+      cube_base: (0.010, 0.010, 0.020). Cubes are color-differentiated.
+    -->
+    <xacro:mz_cube name="cube_00" x_local="0.010" y_local="0.010" z_local="0.020" material="mz_red"/>
+    <xacro:mz_cube name="cube_01" x_local="0.050" y_local="0.010" z_local="0.020" material="mz_green"/>
+    <xacro:mz_cube name="cube_02" x_local="0.090" y_local="0.010" z_local="0.020" material="mz_blue"/>
+
+    <xacro:mz_cube name="cube_10" x_local="0.010" y_local="0.050" z_local="0.020" material="mz_yellow"/>
+    <xacro:mz_cube name="cube_11" x_local="0.050" y_local="0.050" z_local="0.020" material="mz_orange"/>
+    <xacro:mz_cube name="cube_12" x_local="0.090" y_local="0.050" z_local="0.020" material="mz_white"/>
+
+    <xacro:mz_cube name="cube_20" x_local="0.010" y_local="0.090" z_local="0.020" material="mz_magenta"/>
+    <xacro:mz_cube name="cube_21" x_local="0.050" y_local="0.090" z_local="0.020" material="mz_cyan"/>
+    <xacro:mz_cube name="cube_22" x_local="0.090" y_local="0.090" z_local="0.020" material="mz_dark_gray"/>
   </xacro:macro>
 </robot>

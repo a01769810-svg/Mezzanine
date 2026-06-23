@@ -12,14 +12,44 @@
                   $(find mezzanine_rviz_sim)/urdf/mezzanine_cell.urdf.xacro
                   arm_model:=$(arg arm_model)"/>
 
+  <!--
+    xArm 6 home pose (visual only). joint_state_publisher reads the
+    `zeros` rosparam namespace at startup and uses these values as the
+    initial positions for the sliders / published JointState.
+    Tuned for a semi-extended presentable pose pointing toward the work area:
+      joint1 = 0.0   base rotation (facing +x of the table)
+      joint2 = -0.6  shoulder tilted slightly forward (~-34 deg)
+      joint3 = -1.2  elbow bent (~-69 deg)
+      joint4 = 0.0   wrist roll neutral
+      joint5 = 1.5   wrist pitch (~86 deg, gripper looking down)
+      joint6 = 0.0   tool roll neutral
+  -->
   <node if="$(arg use_joint_state_publisher_gui)"
         name="joint_state_publisher_gui"
         pkg="joint_state_publisher_gui"
-        type="joint_state_publisher_gui"/>
+        type="joint_state_publisher_gui">
+    <rosparam param="zeros">
+      joint1: 0.0
+      joint2: -0.6
+      joint3: -1.2
+      joint4: 0.0
+      joint5: 1.5
+      joint6: 0.0
+    </rosparam>
+  </node>
   <node unless="$(arg use_joint_state_publisher_gui)"
         name="joint_state_publisher"
         pkg="joint_state_publisher"
-        type="joint_state_publisher"/>
+        type="joint_state_publisher">
+    <rosparam param="zeros">
+      joint1: 0.0
+      joint2: -0.6
+      joint3: -1.2
+      joint4: 0.0
+      joint5: 1.5
+      joint6: 0.0
+    </rosparam>
+  </node>
 
   <node name="robot_state_publisher"
         pkg="robot_state_publisher"
