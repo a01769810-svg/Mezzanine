@@ -48,18 +48,19 @@ lower-left-front corner anchored.
 | PLC cabinet | 0.700 x 0.250 x 0.500 | 0.050, 0.596, -0.073 | OK |
 | Cobot base | n/a (frame only) | 0.240, 0.425, 0.000 | OK |
 | Cube | 0.040 x 0.040 x 0.050 | on cube_base | OK |
-| Cube base | 0.140 x 0.140 x 0.020 | 0.348, 0.020, 0.000 | OK |
+| Cube base | 0.140 x 0.140 x 0.020 | 0.110, 0.030, 0.000 | revised (was 0.348, 0.020) - left of cobot per user feedback |
 | White board | 0.303 x 0.227 x 0.020 | 0.090, 0.035, 0.000 | OK |
-| Conveyor | 0.400 x 0.132 x 0.055 | 0.385, 0.300, 0.000 | length **TBD** |
+| Conveyor | 0.400 x 0.132 x 0.055 | 0.500, 0.300, 0.000 | revised (was x=0.385) - shifted right per user feedback; length **TBD** |
 | Photoelectric sensor | 0.030 x 0.020 x 0.040 (TBD) | abs ~ 0.595, 0.420, 0.050 | **TBD** local/abs |
 | Camera profile cross | 0.040 x 0.040 | n/a | OK |
-| Camera | 0.060 x 0.060 x 0.060 (TBD) | ~ 0.595, 0.260, 0.635 | **TBD** derived |
-| HMI | 0.200 x 0.050 x 0.150 (TBD) | 0.650, 0.425, 0.000 | dims **TBD** |
+| Camera | 0.060 x 0.060 x 0.060 (TBD) | ~ 0.710, 0.260, 0.635 | derived from new conveyor x; column at back (pegado a la cabina) |
+| Camera profile (column) | 0.040 x 0.040 x 0.720 + arm 0.040 x 0.316 x 0.040 | 0.690, 0.556, 0.000 | revised: pegado a la cabina per user feedback |
+| HMI (Siemens KTP700 7") | base 0.140x0.060x0.012, display 0.214x0.041x0.158 tilted ~15deg | 0.650, 0.425, 0.000 | redesigned with base+arm+tilted display+screen face |
 | Start/E-Stop panel | 0.100 x 0.150 x 0.050 (TBD) | 1.170, 0.040, 0.000 | dims **TBD** |
 | Gripper base | 0.080 x 0.080 x 0.006 | on xArm link6 | OK |
 | Gripper body | 0.060 x 0.060 x 0.040 (TBD) | on gripper_base | placeholder |
 | Gripper fingers | 0.008 m thick, 0.044 m opening, 0.030 m height (TBD) | on gripper_body | placeholder |
-| Computer | n/a | TBD ("right side") | **omitted Phase 1** |
+| Computer | tower 0.090x0.230x0.380 + monitor 0.450x0.030x0.260 | 1.250, 0.030, 0.000 | placeholder per user feedback (right side) |
 
 ## Open items (TBD)
 

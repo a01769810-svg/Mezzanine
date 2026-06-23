@@ -36,6 +36,7 @@
   <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/cubes_and_base.xacro"/>
   <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/white_board.xacro"/>
   <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/gripper_adapter.xacro"/>
+  <xacro:include filename="$(find mezzanine_rviz_sim)/urdf/computer.xacro"/>
 
   <link name="world"/>
 
@@ -57,21 +58,44 @@
 
   <xacro:mz_white_board parent="table_origin" x="0.090" y="0.035" z="0.000"/>
 
-  <xacro:mz_cube_base parent="table_origin" x="0.348" y="0.020" z="0.000"/>
+  <!--
+    cube_base: revised to left-of-cobot per user feedback (was 0.348, 0.020).
+    Cobot center at x=0.240; cubes now sit at x=0.110 (left side, front edge).
+    TBD: confirm against physical layout in Phase 2.
+  -->
+  <xacro:mz_cube_base parent="table_origin" x="0.110" y="0.030" z="0.000"/>
 
-  <xacro:mz_conveyor parent="table_origin" x="0.385" y="0.300" z="0.000"/>
+  <!--
+    Conveyor: revised to be further right per user feedback (was x=0.385).
+    Now at x=0.500. With 0.400 m length placeholder it extends 0.500..0.900.
+    TBD: confirm exact length and x against physical layout.
+  -->
+  <xacro:mz_conveyor parent="table_origin" x="0.500" y="0.300" z="0.000"/>
 
   <xacro:mz_photoelectric_sensor parent="conveyor_base"
                                  x="0.210" y="0.120" z="0.050"/>
 
+  <!--
+    Camera support: vertical column moved to back edge (pegado a la cabina)
+    per user feedback. profile_y=0.556 puts the column right behind the
+    PLC cabinet zone; arm length 0.316 m brings camera over the sensor area
+    at (~0.710, ~0.260, 0.635).
+  -->
   <xacro:mz_camera_support parent="table_origin"
-                           profile_x="0.575" profile_y="0.400"
+                           profile_x="0.690" profile_y="0.556"
+                           profile_arm_len_y="0.316"
                            camera_z="0.635"/>
 
   <xacro:mz_hmi parent="table_origin" x="0.650" y="0.425" z="0.000"/>
 
   <xacro:mz_buttons_panel parent="table_origin"
                           x="1.170" y="0.040" z="0.000"/>
+
+  <!--
+    Computer: TBD position - placed at right side of the table per user
+    feedback. Tower + monitor placeholder.
+  -->
+  <xacro:mz_computer parent="table_origin" x="1.250" y="0.030" z="0.000"/>
 
   <!--
     cobot_base: EXCEPTION to the lower-left-corner convention.

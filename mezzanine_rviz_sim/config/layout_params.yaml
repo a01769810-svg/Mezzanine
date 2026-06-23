@@ -70,9 +70,11 @@ positions:
     xyz_m_center: [0.240, 0.425, 0.000]
     anchor: center_of_circular_base
   cube_base:
-    xyz_m: [0.348, 0.020, 0.000]
+    xyz_m: [0.110, 0.030, 0.000]   # revised: left of cobot (was 0.348, 0.020)
+    status: revised_user_feedback
   conveyor:
-    xyz_m: [0.385, 0.300, 0.000]
+    xyz_m: [0.500, 0.300, 0.000]   # revised: further right (was 0.385, 0.300)
+    status: revised_user_feedback
   photoelectric_sensor:
     xyz_cm_reported: [21, 12, 5]
     interpretation: local_to_conveyor_probable
@@ -88,13 +90,16 @@ positions:
     xyz_m: [0.050, 0.596, -0.073]
     note: "y=0.596 is the back edge of the table; the cabinet sits at the back edge."
   computer:
-    xyz_m: null
-    status: TBD
-    note: "On the right side of the table; exact position TBD - omitted in Phase 1."
+    xyz_m: [1.250, 0.030, 0.000]
+    status: placeholder_added
+    note: "Right side of the table per user feedback. Tower + monitor placeholder; exact position TBD."
   camera:
-    xyz_m_assumed: [0.595, 0.260, 0.635]
+    xyz_m_assumed: [0.710, 0.260, 0.635]
     status: TBD
-    note: "Above photoelectric sensor; y offset -0.16 m due to aluminum profile."
+    note: "Above photoelectric sensor (sensor at conveyor-local +0.21 in x). Column pegado a la cabina (profile_y=0.556); arm length 0.316 m."
+  camera_profile:
+    xyz_m_corner: [0.690, 0.556, 0.000]
+    note: "Vertical column lower-left-front corner; back edge adjacent to PLC cabinet (pegado a la cabina) per user feedback."
   table_support_left:
     xyz_m: [0.030, 0.010, -0.720]   # placeholder; column reaches 0.030 + 0.690 = 0.720 below tabletop top
   table_support_right:
