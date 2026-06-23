@@ -6,13 +6,13 @@
       - hmi_panel (base + small support arm on the table)
       - hmi_display (the tilted display housing with screen)
     Display is tilted backward ~15 deg for operator viewing.
-    Position xyz = (0.650, 0.425, 0) m is the lower-left-front corner
-    of the base on the tabletop.
-    Dimensions are placeholders consistent with a 7" SIMATIC panel.
+    Position from EstacionMezzanine.dxf: LL = (0.650, 0.517, 0) m
+    (between conveyor back edge and PLC cabinet front edge).
+    Base footprint (0.168 x 0.067) matches the DXF rectangle (light blue).
   -->
-  <!-- Base + support -->
-  <xacro:property name="hmi_base_x" value="0.140"/>
-  <xacro:property name="hmi_base_y" value="0.060"/>
+  <!-- Base + support; base XY matches DXF footprint -->
+  <xacro:property name="hmi_base_x" value="0.168"/>
+  <xacro:property name="hmi_base_y" value="0.067"/>
   <xacro:property name="hmi_base_z" value="0.012"/>
 
   <xacro:property name="hmi_arm_x" value="0.030"/>
@@ -32,7 +32,7 @@
   <xacro:property name="hmi_tilt_deg" value="15"/>
   <xacro:property name="hmi_tilt_rad" value="${hmi_tilt_deg * 3.14159265 / 180}"/>
 
-  <xacro:macro name="mz_hmi" params="parent:=table_origin x:=0.650 y:=0.425 z:=0.000">
+  <xacro:macro name="mz_hmi" params="parent:=table_origin x:=0.650 y:=0.517 z:=0.000">
 
     <!-- hmi_panel: base plate + small support arm (Siemens beige/light gray) -->
     <link name="hmi_panel">

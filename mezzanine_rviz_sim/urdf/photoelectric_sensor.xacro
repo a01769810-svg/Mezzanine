@@ -1,15 +1,19 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <!--
-    Photoelectric sensor. Dimensions are placeholders (TBD).
-    Reported (21, 12, 5) cm is treated as LOCAL to the conveyor.
+    Photoelectric sensor. Body box 0.030 x 0.020 x 0.040 m.
+    DXF source: U-shaped bracket (cream RGB 248,246,176) at conveyor back edge.
+    Body center (world frame): (0.617, 0.530, ~0.060). Conveyor_base local frame
+    has LL world (0.385, 0.302, 0), so local LL = (0.217, 0.218, 0.060).
+    Z = 0.060 rests the body on the conveyor top surface; the actual bracket
+    lifts it slightly higher - exact height TBD until physical measurement.
     The sensor is attached as child of conveyor_base.
   -->
   <xacro:property name="ps_size_x" value="0.030"/>
   <xacro:property name="ps_size_y" value="0.020"/>
   <xacro:property name="ps_size_z" value="0.040"/>
 
-  <xacro:macro name="mz_photoelectric_sensor" params="parent:=conveyor_base x:=0.210 y:=0.120 z:=0.050">
+  <xacro:macro name="mz_photoelectric_sensor" params="parent:=conveyor_base x:=0.217 y:=0.218 z:=0.060">
     <link name="photoelectric_sensor">
       <visual>
         <origin xyz="${ps_size_x/2} ${ps_size_y/2} ${ps_size_z/2}" rpy="0 0 0"/>

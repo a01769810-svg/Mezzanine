@@ -1,11 +1,16 @@
 # Mezzanine layout parameters for ROS/RViz - mezzanine_rviz_sim package
-# Phase 1 working copy. Source of truth lives at:
-#   reference/mezzanine_photos_measurements/00_medidas_y_layout/layout_ros_params_m.yaml
 #
-# Units: meters. Source measurements were provided in centimeters (cm * 0.01).
+# Phase 1.1 update: positions and key dimensions are now derived from
+# the DXF reference EstacionMezzanine.dxf (see reference/dxf/).
+# Previous Phase 1 values came from photos + tape measurements.
+#
+# Units: meters. The DXF is in mm (INSUNITS=4) and is converted: m = mm * 0.001.
 # Coordinate origin: lower-left corner of tabletop, z=0 at tabletop surface.
 # Convention: every xyz_m is the LOWER-LEFT-FRONT CORNER of the component box,
 # NOT the geometric center. URDF geometry origins offset by +size/2 to compensate.
+# EXCEPTIONS:
+#   - table and plc_cabinet xyz_m is the TOP-LEFT-FRONT corner (they extend below z=0).
+#   - cobot_base xyz_m is the CENTER of the circular base (see docs/measurements.md).
 
 coordinate_system:
   origin: lower_left_corner_of_tabletop
@@ -14,7 +19,15 @@ coordinate_system:
   z_axis: height
   table_surface_z_m: 0.0
   cm_to_m: 0.01
+  mm_to_m: 0.001
   box_xyz_means: lower_left_front_corner
+
+dxf_source:
+  file: reference/dxf/EstacionMezzanine.dxf
+  units: mm  # $INSUNITS = 4
+  table_origin_in_dxf_mm: [3.324832210375461, -0.273418786295224]
+  conversion: "(x_dxf - 3.32483) * 0.001, (y_dxf + 0.27342) * 0.001"
+  notes: "DXF gives planar XY only. Z values come from prior physical measurements or component specs."
 
 dimensions:
   table:
@@ -29,37 +42,60 @@ dimensions:
   plc_cabinet:
     size_m: [0.700, 0.250, 0.500]
   cube:
-    size_m: [0.040, 0.040, 0.050]
+    size_m: [0.040, 0.040, 0.040]
+    count: 9
+    grid: [3, 3]
   cube_base:
     size_m: [0.140, 0.140, 0.020]
     lip_or_cutout_thickness_m: 0.005
   white_board:
     size_m: [0.303, 0.227, 0.020]
+    note: "Flat plate on the tabletop, not vertical. Source: DXF red rectangle."
   gripper:
     working_area_m: 0.044
     total_width_m: 0.060
     finger_thickness_m: 0.008
     finger_height_m: 0.030      # TBD - placeholder
     base_size_m: [0.080, 0.080, 0.006]
-    body_size_m: [0.060, 0.060, 0.040]  # TBD - placeholder for actuator body
+    body_size_m: [0.060, 0.060, 0.040]  # TBD - placeholder
   conveyor:
-    size_m: [0.400, 0.132, 0.055]  # length TBD - placeholder 0.400 m
-    length_status: TBD
+    model: "DOBOT Conveyor Belt Kit"
+    size_m: [0.700, 0.215, 0.060]
+    official_dimensions_m: [0.700, 0.215, 0.060]
+    effective_travel_m: 0.600
+    payload_kg: 0.5
+    max_speed_mps: 0.120
+    cad_official_status: "Official STEP/SolidWorks not found yet"
+    download_center: "https://www.dobot.cc/downloadcenter.html"
   photoelectric_sensor:
-    size_m: [0.030, 0.020, 0.040]  # TBD - placeholder dims
+    size_m: [0.030, 0.020, 0.040]
+    note: "Body box; DXF U-shape (cream) interpreted as the bracket support."
   camera_profile:
     cross_section_m: [0.040, 0.040]
-    vertical_length_m: 0.720    # TBD - placeholder so camera reaches ~0.635 m
-    horizontal_arm_length_m: 0.180  # TBD - placeholder for arm reaching camera
+    vertical_length_m: 0.720
+    horizontal_arm_length_m: 0.169
     camera_height_from_table_m: 0.635
   camera:
-    size_m: [0.060, 0.060, 0.060]  # TBD - placeholder
+    size_m: [0.060, 0.060, 0.060]  # placeholder body
+    note: "DXF orange rectangle is the body footprint projected on the table; Z TBD."
   hmi:
-    size_m: [0.200, 0.050, 0.150]  # TBD - placeholder dims
+    base_size_m: [0.168, 0.067, 0.012]  # base footprint matches DXF light-blue rectangle
+    display_size_m: [0.214, 0.041, 0.158]
+    screen_size_m: [0.160, 0.004, 0.105]
+    arm_size_m: [0.030, 0.040, 0.080]
+    tilt_deg: 15
   buttons_panel:
-    size_m: [0.100, 0.150, 0.050]  # TBD - placeholder dims
-    button_radius_m: 0.020
+    size_m: [0.100, 0.150, 0.050]
+    start_button_radius_m: 0.019
+    estop_button_radius_m: 0.029
     button_height_m: 0.012
+  computer_workstation_footprint:
+    size_m: [0.372, 0.432]   # XY only; visual approximation; extends past table edges
+    note: "Magenta rectangle in DXF represents tower + monitor + keyboard + mouse."
+  computer_tower:
+    model: "Lenovo IdeaCentre / tinker"
+    size_m: [0.11825, 0.07239, 0.0861]
+    mesh_status: "primitive box; swap to meshes/computer/tinker.obj scale 0.001 when staged"
 
 # All positions are LOWER-LEFT-FRONT CORNER of the component box,
 # expressed in the table_origin frame, EXCEPT cobot_base (see below).
@@ -67,40 +103,101 @@ positions:
   # EXCEPTION: cobot_base xyz_m is the CENTER of the circular cobot base,
   # NOT a corner. The xArm 6 mounts centered on this point.
   cobot_base:
-    xyz_m_center: [0.240, 0.425, 0.000]
+    xyz_m_center: [0.240, 0.426, 0.000]
     anchor: center_of_circular_base
+    source: dxf_green_circle
+    note: "DXF gives center (0.2400, 0.4259); rounded to 0.426. Previous Phase 1 (0.425) within 1 mm."
+
   cube_base:
-    xyz_m: [0.110, 0.030, 0.000]   # revised: left of cobot (was 0.348, 0.020)
-    status: revised_user_feedback
+    xyz_m: [0.020, 0.348, 0.000]
+    source: dxf_orange_outer_140x140
+    previous_phase1: [0.110, 0.030, 0.000]
+    diff_note: "Moved upper-left of cobot per DXF; previous value placed it front-left."
+
+  cubes_grid:
+    count: 9
+    grid: [3, 3]
+    cube_size_m: 0.040
+    grid_local_origin_m: [0.010, 0.010, 0.020]   # local to cube_base; +5 mm lip
+    spacing_m: 0.040
+    colors:
+      "0,0": mz_red
+      "0,1": mz_green
+      "0,2": mz_blue
+      "1,0": mz_yellow
+      "1,1": mz_orange
+      "1,2": mz_white
+      "2,0": mz_magenta
+      "2,1": mz_cyan
+      "2,2": mz_dark_gray
+
   conveyor:
-    xyz_m: [0.500, 0.300, 0.000]   # revised: further right (was 0.385, 0.300)
-    status: revised_user_feedback
+    xyz_m: [0.385, 0.302, 0.000]
+    source: dxf_blue_700x215
+    previous_phase1: [0.500, 0.300, 0.000]
+    diff_note: "Moved 0.115 m to the left to match DXF; new official DOBOT length 0.700 m."
+
   photoelectric_sensor:
-    xyz_cm_reported: [21, 12, 5]
-    interpretation: local_to_conveyor_probable
-    xyz_m_absolute_assumed: [0.595, 0.420, 0.050]
-    status: TBD
+    xyz_m_world_center: [0.617, 0.530, 0.060]
+    xyz_m_local_corner_in_conveyor_base: [0.217, 0.218, 0.060]
+    source: dxf_cream_U_shape
+    previous_phase1_local: [0.210, 0.120, 0.050]
+    diff_note: "Now anchored at the back edge of the conveyor; height TBD until physical measurement."
+
+  camera_profile:
+    xyz_m_corner: [0.598, 0.556, 0.000]
+    arm_len_m: 0.169
+    note: "Column LL pegada a la cabina (cabina front edge at y=0.596). Arm length recomputed exact."
+    previous_phase1_corner: [0.690, 0.556, 0.000]
+    previous_phase1_arm_len: 0.316
+
+  camera:
+    xyz_m_center: [0.618, 0.407, 0.635]
+    source: dxf_orange_rect_centroid
+    note: "Z kept from Phase 1; DXF provides planar XY only."
+    previous_phase1: [0.710, 0.260, 0.635]
+
   hmi:
-    xyz_m: [0.650, 0.425, 0.000]
-  start_emergency_panel:
+    xyz_m: [0.650, 0.517, 0.000]
+    source: dxf_light_blue_168x67
+    previous_phase1: [0.650, 0.425, 0.000]
+    diff_note: "Moved 0.092 m back to sit between conveyor back edge and PLC cabinet front edge."
+
+  start_button:
+    xyz_m_world_center: [1.220, 0.072, 0.050]
+    radius_m: 0.019
+    panel_local_xyz: [0.050, 0.032, 0.050]
+    source: dxf_cyan_small_circle
+
+  estop_button:
+    xyz_m_world_center: [1.220, 0.146, 0.050]
+    radius_m: 0.029
+    panel_local_xyz: [0.050, 0.106, 0.050]
+    source: dxf_cyan_mushroom_circle
+
+  buttons_panel:
     xyz_m: [1.170, 0.040, 0.000]
+    source: dxf_cyan_100x150
+    unchanged_from_phase1: true
+
   white_board:
-    xyz_m: [0.090, 0.035, 0.000]
+    xyz_m: [0.109, 0.034, 0.000]
+    source: dxf_red_303x227
+    previous_phase1: [0.090, 0.035, 0.000]
+    diff_note: "Shifted 0.019 m to the right; same logical position (flat plate)."
+
   plc_cabinet:
     xyz_m: [0.050, 0.596, -0.073]
-    note: "y=0.596 is the back edge of the table; the cabinet sits at the back edge."
-  computer:
-    xyz_m: [1.250, 0.030, 0.000]
-    status: placeholder_added
-    note: "Right side of the table per user feedback. Tower + monitor placeholder; exact position TBD."
-  camera:
-    xyz_m_assumed: [0.710, 0.260, 0.635]
-    status: TBD
-    note: "Above photoelectric sensor (sensor at conveyor-local +0.21 in x). Column pegado a la cabina (profile_y=0.556); arm length 0.316 m."
-  camera_profile:
-    xyz_m_corner: [0.690, 0.556, 0.000]
-    note: "Vertical column lower-left-front corner; back edge adjacent to PLC cabinet (pegado a la cabina) per user feedback."
+    source: dxf_green_lime_700x250
+    note: "y=0.596 is the back edge of the table; the cabinet sits at the back edge. DXF confirms XY; Z and depth retained from Phase 1."
+
+  computer_workstation:
+    xyz_m: [1.137, 0.260, 0.000]
+    source: dxf_magenta_372x432
+    previous_phase1: [1.250, 0.030, 0.000]
+    diff_note: "Footprint is the full workstation area; extends past the table edges. Tower placed back-right inside the footprint."
+
   table_support_left:
-    xyz_m: [0.030, 0.010, -0.720]   # placeholder; column reaches 0.030 + 0.690 = 0.720 below tabletop top
+    xyz_m: [0.030, 0.010, -0.720]
   table_support_right:
-    xyz_m: [1.300, 0.010, -0.720]   # placeholder mirrored to right side of table
+    xyz_m: [1.300, 0.010, -0.720]

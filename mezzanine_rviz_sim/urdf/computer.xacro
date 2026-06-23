@@ -1,62 +1,108 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <!--
-    Computer placeholder on the RIGHT side of the table.
-    Position xyz = lower-left-front corner of the workstation footprint.
-    Workstation = a vertical tower (black box) + a flat monitor with stand.
-    Dimensions are placeholders (TBD - to confirm against photos).
+    Computer workstation - visual approximation of the full computer area.
+    The magenta rectangle in EstacionMezzanine.dxf is the FULL workstation
+    footprint (372 x 432 mm), NOT just the tower. It represents tower +
+    monitor + keyboard + mouse and extends past the table edges.
+    Position from DXF: workstation LL = (1.137, 0.260, 0) m.
+
+    Tower model: Lenovo IdeaCentre / tinker. Bounding box from tinker.obj:
+      0.11825 x 0.07239 x 0.0861 m.
+    The tower is placed toward the BACK-RIGHT of the magenta footprint per
+    user direction. Remaining area is monitor (centered, with stand) and
+    a flat keyboard/mouse placeholder in front.
+
+    NOTE: VISUAL APPROXIMATION. The magenta footprint represents the entire
+    workstation, not just the tower. Collision boxes are simple primitives.
+    To swap the tower primitive for a tinker.obj mesh, stage the OBJ under
+    meshes/computer/tinker.obj and replace the tower <box> with:
+      <mesh filename="package://mezzanine_rviz_sim/meshes/computer/tinker.obj"
+            scale="0.001 0.001 0.001"/>
   -->
-  <xacro:property name="tower_size_x" value="0.090"/>
-  <xacro:property name="tower_size_y" value="0.230"/>
-  <xacro:property name="tower_size_z" value="0.380"/>
+  <!-- Workstation footprint (DXF magenta: 0.372 x 0.432) -->
+  <xacro:property name="ws_size_x" value="0.372"/>
+  <xacro:property name="ws_size_y" value="0.432"/>
 
-  <xacro:property name="mon_stand_x" value="0.140"/>
-  <xacro:property name="mon_stand_y" value="0.180"/>
+  <!-- Lenovo tinker tower bounding box (mm-to-m from tinker.obj) -->
+  <xacro:property name="tower_size_x" value="0.11825"/>
+  <xacro:property name="tower_size_y" value="0.07239"/>
+  <xacro:property name="tower_size_z" value="0.0861"/>
+
+  <!-- Tower local placement: back-right of workstation with 20 mm margin -->
+  <xacro:property name="tower_local_x" value="${ws_size_x - tower_size_x - 0.020}"/>
+  <xacro:property name="tower_local_y" value="${ws_size_y - tower_size_y - 0.020}"/>
+
+  <!-- Monitor stand (flat foot), centered in workstation X -->
+  <xacro:property name="mon_stand_x" value="0.180"/>
+  <xacro:property name="mon_stand_y" value="0.140"/>
   <xacro:property name="mon_stand_z" value="0.020"/>
+  <xacro:property name="mon_stand_local_x" value="${(ws_size_x - mon_stand_x) / 2}"/>
+  <xacro:property name="mon_stand_local_y" value="${ws_size_y - mon_stand_y - 0.060}"/>
 
+  <!-- Monitor riser / column -->
   <xacro:property name="mon_col_x" value="0.030"/>
   <xacro:property name="mon_col_y" value="0.030"/>
-  <xacro:property name="mon_col_z" value="0.090"/>
+  <xacro:property name="mon_col_z" value="0.110"/>
 
-  <xacro:property name="mon_size_x" value="0.450"/>
+  <!-- Monitor body and screen -->
+  <xacro:property name="mon_size_x" value="0.520"/>
   <xacro:property name="mon_size_y" value="0.030"/>
-  <xacro:property name="mon_size_z" value="0.260"/>
+  <xacro:property name="mon_size_z" value="0.310"/>
+  <xacro:property name="mon_scr_x"  value="0.480"/>
+  <xacro:property name="mon_scr_y"  value="0.004"/>
+  <xacro:property name="mon_scr_z"  value="0.280"/>
 
-  <xacro:property name="mon_scr_x" value="0.410"/>
-  <xacro:property name="mon_scr_y" value="0.004"/>
-  <xacro:property name="mon_scr_z" value="0.230"/>
+  <!-- Keyboard placeholder (flat box) in front area -->
+  <xacro:property name="kbd_size_x" value="0.280"/>
+  <xacro:property name="kbd_size_y" value="0.110"/>
+  <xacro:property name="kbd_size_z" value="0.018"/>
+  <xacro:property name="kbd_local_x" value="${(ws_size_x - kbd_size_x) / 2}"/>
+  <xacro:property name="kbd_local_y" value="0.020"/>
 
-  <xacro:macro name="mz_computer" params="parent:=table_origin x:=1.250 y:=0.030 z:=0.000">
+  <!-- Mouse placeholder -->
+  <xacro:property name="mouse_size_x" value="0.060"/>
+  <xacro:property name="mouse_size_y" value="0.100"/>
+  <xacro:property name="mouse_size_z" value="0.030"/>
+  <xacro:property name="mouse_local_x" value="${ws_size_x - mouse_size_x - 0.030}"/>
+  <xacro:property name="mouse_local_y" value="0.030"/>
 
+  <xacro:macro name="mz_computer" params="parent:=table_origin x:=1.137 y:=0.260 z:=0.000">
     <link name="computer">
-      <!-- Tower (CPU box, vertical) -->
+      <!-- Tower (Lenovo tinker visual approximation) -->
       <visual>
-        <origin xyz="${tower_size_x/2} ${tower_size_y/2} ${tower_size_z/2}" rpy="0 0 0"/>
+        <origin xyz="${tower_local_x + tower_size_x/2}
+                     ${tower_local_y + tower_size_y/2}
+                     ${tower_size_z/2}" rpy="0 0 0"/>
         <geometry>
           <box size="${tower_size_x} ${tower_size_y} ${tower_size_z}"/>
         </geometry>
         <material name="mz_dark_gray"/>
       </visual>
       <collision>
-        <origin xyz="${tower_size_x/2} ${tower_size_y/2} ${tower_size_z/2}" rpy="0 0 0"/>
+        <origin xyz="${tower_local_x + tower_size_x/2}
+                     ${tower_local_y + tower_size_y/2}
+                     ${tower_size_z/2}" rpy="0 0 0"/>
         <geometry>
           <box size="${tower_size_x} ${tower_size_y} ${tower_size_z}"/>
         </geometry>
       </collision>
 
-      <!-- Monitor stand -->
+      <!-- Monitor stand (flat foot) -->
       <visual>
-        <origin xyz="${tower_size_x + 0.020 + mon_stand_x/2} ${mon_stand_y/2 + 0.020} ${mon_stand_z/2}" rpy="0 0 0"/>
+        <origin xyz="${mon_stand_local_x + mon_stand_x/2}
+                     ${mon_stand_local_y + mon_stand_y/2}
+                     ${mon_stand_z/2}" rpy="0 0 0"/>
         <geometry>
           <box size="${mon_stand_x} ${mon_stand_y} ${mon_stand_z}"/>
         </geometry>
         <material name="mz_dark_gray"/>
       </visual>
 
-      <!-- Monitor column (riser) -->
+      <!-- Monitor riser / column -->
       <visual>
-        <origin xyz="${tower_size_x + 0.020 + mon_stand_x/2}
-                     ${mon_stand_y/2 + 0.020}
+        <origin xyz="${mon_stand_local_x + mon_stand_x/2}
+                     ${mon_stand_local_y + mon_stand_y/2}
                      ${mon_stand_z + mon_col_z/2}" rpy="0 0 0"/>
         <geometry>
           <box size="${mon_col_x} ${mon_col_y} ${mon_col_z}"/>
@@ -66,8 +112,8 @@
 
       <!-- Monitor body (bezel) -->
       <visual>
-        <origin xyz="${tower_size_x + 0.020 + mon_stand_x/2}
-                     ${mon_stand_y/2 + 0.020}
+        <origin xyz="${mon_stand_local_x + mon_stand_x/2}
+                     ${mon_stand_local_y + mon_stand_y/2}
                      ${mon_stand_z + mon_col_z + mon_size_z/2}" rpy="0 0 0"/>
         <geometry>
           <box size="${mon_size_x} ${mon_size_y} ${mon_size_z}"/>
@@ -75,15 +121,37 @@
         <material name="mz_dark_gray"/>
       </visual>
 
-      <!-- Screen face on front (-y of monitor body) -->
+      <!-- Screen face on front (-y) -->
       <visual>
-        <origin xyz="${tower_size_x + 0.020 + mon_stand_x/2}
-                     ${mon_stand_y/2 + 0.020 - mon_size_y/2 - mon_scr_y/2}
+        <origin xyz="${mon_stand_local_x + mon_stand_x/2}
+                     ${mon_stand_local_y + mon_stand_y/2 - mon_size_y/2 - mon_scr_y/2}
                      ${mon_stand_z + mon_col_z + mon_size_z/2}" rpy="0 0 0"/>
         <geometry>
           <box size="${mon_scr_x} ${mon_scr_y} ${mon_scr_z}"/>
         </geometry>
         <material name="mz_hmi_dark"/>
+      </visual>
+
+      <!-- Keyboard placeholder -->
+      <visual>
+        <origin xyz="${kbd_local_x + kbd_size_x/2}
+                     ${kbd_local_y + kbd_size_y/2}
+                     ${kbd_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${kbd_size_x} ${kbd_size_y} ${kbd_size_z}"/>
+        </geometry>
+        <material name="mz_dark_gray"/>
+      </visual>
+
+      <!-- Mouse placeholder -->
+      <visual>
+        <origin xyz="${mouse_local_x + mouse_size_x/2}
+                     ${mouse_local_y + mouse_size_y/2}
+                     ${mouse_size_z/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${mouse_size_x} ${mouse_size_y} ${mouse_size_z}"/>
+        </geometry>
+        <material name="mz_dark_gray"/>
       </visual>
     </link>
 

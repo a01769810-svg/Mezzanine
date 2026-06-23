@@ -2,9 +2,14 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <!--
     Camera support: vertical aluminum profile (4x4 cm cross section) standing
-    at sensor xy with height 0.720 m (TBD placeholder), plus a horizontal arm
-    extending in -y to support the camera. Camera placed at the documented
-    position (0.595, 0.260, 0.635) m.
+    at LL=(0.598, 0.556) m (pegada a la cabina - back edge at y=0.596),
+    with a horizontal arm extending in -y to support the camera.
+    DXF source: orange RGB 248,153,30 rectangle (camera body footprint
+    centered at (0.618, 0.407)).
+    Geometry: camera_world_y = profile_y + cs_y/2 - arm_len_y. With
+    profile_y=0.556, cs_y/2=0.020 and camera_y=0.407, arm_len_y=0.169 m
+    (computed exact instead of 0.189 m estimate from the diagnostic).
+    Z=0.635 m kept from Phase 1; the DXF only provides planar XY.
   -->
   <xacro:property name="profile_cs_x" value="0.040"/>
   <xacro:property name="profile_cs_y" value="0.040"/>
@@ -14,9 +19,9 @@
   <xacro:property name="camera_size_z" value="0.060"/>
 
   <xacro:macro name="mz_camera_support" params="parent:=table_origin
-                                                 profile_x:=0.575
-                                                 profile_y:=0.400
-                                                 profile_arm_len_y:=0.180
+                                                 profile_x:=0.598
+                                                 profile_y:=0.556
+                                                 profile_arm_len_y:=0.169
                                                  camera_z:=0.635">
     <link name="camera_profile">
       <!-- vertical aluminum column -->
